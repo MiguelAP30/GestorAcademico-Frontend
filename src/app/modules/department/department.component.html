@@ -1,0 +1,14 @@
+<h2>Gestor Académico - Departamentos</h2>
+
+<form (submit)="addDepartment()">
+  <input type="text" [(ngModel)]="newDepartment.name" [ngModelOptions]="{standalone: true}" placeholder="Nombre del Departamento" required>
+  <input type="number" [(ngModel)]="newDepartment.universityId" [ngModelOptions]="{standalone: true}" placeholder="ID de la Universidad" required>
+  <button type="submit" [disabled]="!newDepartment.name.trim() || !newDepartment.universityId">Agregar</button>
+</form>
+
+<ul>
+  <li *ngFor="let department of departments">
+    {{ department.name }} (ID Dept: {{ department.id }}, Univ: {{ department.university?.name || 'Desconocida' }})
+    <button (click)="deleteDepartment(department.id)">Eliminar</button>
+  </li>
+</ul>

@@ -1,12 +1,19 @@
+// src/app/app.components.ts
 import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
-  templateUrl: './app.component.html',
-  styleUrl: './app.component.css'
+  standalone: true, 
+  imports: [RouterModule], // ✅ Asegura que el router funciona
+  template: `
+    <h1>Gestor Académico</h1>
+    <nav>
+      <a routerLink="/universities">Universidades</a>
+      <a routerLink="/professors">Profesores</a>
+      <a routerLink="/departments">Departamentos</a>
+    </nav>
+    <router-outlet></router-outlet> <!-- ✅ Aquí se renderizarán las rutas -->
+  `
 })
-export class AppComponent {
-  title = 'academic-manager-frontend';
-}
+export class AppComponent {}

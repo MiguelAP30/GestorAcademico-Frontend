@@ -1,0 +1,19 @@
+<h2>Gestor Académico - Universidades</h2>
+
+<form (submit)="addUniversity()">
+  <input 
+    type="text" 
+    [(ngModel)]="newUniversity.name" 
+    [ngModelOptions]="{standalone: true}" 
+    placeholder="Nombre de la universidad" 
+    required
+  >
+  <button type="submit" [disabled]="!newUniversity.name.trim()">Agregar</button>
+</form>
+
+<ul>
+  <li *ngFor="let university of universities">
+    {{ university.name }}
+    <button (click)="deleteUniversity(university.id)">Eliminar</button>
+  </li>
+</ul>

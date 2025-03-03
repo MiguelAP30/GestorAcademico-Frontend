@@ -1,0 +1,16 @@
+<h2>Gestor Académico - Profesores</h2>
+
+<form (submit)="addProfessor()">
+  <input type="text" [(ngModel)]="newProfessor.identification" [ngModelOptions]="{standalone: true}" placeholder="Identificación" required>
+  <input type="text" [(ngModel)]="newProfessor.firstName" [ngModelOptions]="{standalone: true}" placeholder="Nombre" required>
+  <input type="text" [(ngModel)]="newProfessor.lastName" [ngModelOptions]="{standalone: true}" placeholder="Apellido" required>
+  <input type="number" [(ngModel)]="newProfessor.departmentId" [ngModelOptions]="{standalone: true}" placeholder="ID del Departamento">
+  <button type="submit" [disabled]="!newProfessor.identification.trim() || !newProfessor.firstName.trim() || !newProfessor.lastName.trim()">Agregar</button>
+</form>
+
+<ul>
+  <li *ngFor="let professor of professors">
+    {{ professor.firstName }} {{ professor.lastName }} (ID: {{ professor.identification }})
+    <button (click)="deleteProfessor(professor.identification)">Eliminar</button>
+  </li>
+</ul>
