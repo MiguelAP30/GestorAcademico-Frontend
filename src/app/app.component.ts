@@ -24,6 +24,7 @@ import { NgIf } from '@angular/common';
       <li><a routerLink="/" (click)="closeMenu()">✅ Prerrequisitos</a></li>
       <li><a routerLink="/" (click)="closeMenu()">📝 Matrículas</a></li>
       <li><a routerLink="/" (click)="closeMenu()">📊 Evaluaciones</a></li>
+      <li><a routerLink="/evaluation-type" (click)="closeMenu()">📊 Tipos de Evaluación</a></li>
       <li><a routerLink="/students" (click)="closeMenu()">🎓 Estudiantes</a></li>
     </ul>
   </div>

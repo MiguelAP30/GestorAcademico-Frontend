@@ -7,7 +7,8 @@ export const appRoutes: Routes = [
   { path: 'professors', loadComponent: () => import('./modules/professor/professor.component').then(m => m.ProfessorComponent) },
   { path: 'departments', loadComponent: () => import('./modules/department/department.component').then(m => m.DepartmentComponent) },
   { path: 'courses', loadComponent: () => import('./modules/course/course.component').then(m => m.CourseComponent) },
-  { path: 'students', loadComponent: () => import('./modules/student/student.component').then(m => m.StudentComponent) }
+  { path: 'students', loadComponent: () => import('./modules/student/student.component').then(m => m.StudentComponent) },
+  { path: 'evaluation-type', loadComponent: () => import('./modules/evaluation-type/evaluation-type.component').then(m => m.EvaluationTypeComponent) }
 
 ];
 
