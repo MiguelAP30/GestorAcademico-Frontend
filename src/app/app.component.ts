@@ -12,6 +12,7 @@ import { RouterModule } from '@angular/router';
       <a routerLink="/universities">Universidades</a>
       <a routerLink="/professors">Profesores</a>
       <a routerLink="/departments">Departamentos</a>
+      <a routerLink="/courses">Cursos</a>
     </nav>
     <router-outlet></router-outlet> <!-- ✅ Aquí se renderizarán las rutas -->
   `

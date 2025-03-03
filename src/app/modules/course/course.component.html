@@ -1,1 +1,13 @@
-<p>course works!</p>
+<div class="container">
+    <h2>Cursos</h2>
+    <button (click)="createCourse()">Agregar Curso</button>
+  
+    <ul>
+      <li *ngFor="let course of courses">
+        {{ course.name }} - {{ course.description }}
+        <button (click)="editCourse(course)">Editar</button>
+        <button (click)="deleteCourse(course.id)">Eliminar</button>
+      </li>
+    </ul>
+  </div>
+  
