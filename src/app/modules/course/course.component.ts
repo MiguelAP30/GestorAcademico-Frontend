@@ -1,11 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { CourseService } from '../../services/course.service';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-course',
   templateUrl: './course.component.html',
-  styleUrls: ['./course.component.css']
+  styleUrls: ['./course.component.css'],
+  imports: [CommonModule]
 })
+
 export class CourseComponent implements OnInit {
   courses: any[] = [];
 

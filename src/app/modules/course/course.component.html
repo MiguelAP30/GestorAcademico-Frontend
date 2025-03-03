@@ -1,13 +1,16 @@
 <div class="container">
-    <h2>Cursos</h2>
-    <button (click)="createCourse()">Agregar Curso</button>
-  
-    <ul>
-      <li *ngFor="let course of courses">
-        {{ course.name }} - {{ course.description }}
-        <button (click)="editCourse(course)">Editar</button>
-        <button (click)="deleteCourse(course.id)">Eliminar</button>
-      </li>
-    </ul>
-  </div>
-  
+  <h2>Cursos</h2>
+  <button (click)="createCourse()">Agregar Curso</button>
+
+  <ul>
+    <li *ngFor="let course of courses">
+      <div class="course-info">
+        <strong>{{ course.name }}</strong> - {{ course.description }}
+      </div>
+      <div class="course-actions">
+        <button (click)="editCourse(course)">✏️ Editar</button>
+        <button class="delete" (click)="deleteCourse(course.id)">🗑️ Eliminar</button>
+      </div>
+    </li>
+  </ul>
+</div>

@@ -1,20 +1,45 @@
 // src/app/app.components.ts
 import { Component } from '@angular/core';
 import { RouterModule } from '@angular/router';
+import { NgIf } from '@angular/common'; 
 
 @Component({
   selector: 'app-root',
   standalone: true, 
-  imports: [RouterModule], // ✅ Asegura que el router funciona
+  imports: [RouterModule,NgIf],
   template: `
-    <h1>Gestor Académico</h1>
-    <nav>
-      <a routerLink="/universities">Universidades</a>
-      <a routerLink="/professors">Profesores</a>
-      <a routerLink="/departments">Departamentos</a>
-      <a routerLink="/courses">Cursos</a>
-    </nav>
+<nav class="navbar">
+  <button class="menu-toggle" (click)="toggleMenu()">☰</button>
+  <div class="logo">📚 Gestor Académico</div>
+</nav>
+
+<!-- Menú lateral -->
+<div class="sidebar" [class.active]="menuOpen">
+  <button class="close-btn" (click)="toggleMenu()">✖</button>
+  <ul>
+    <li><a routerLink="/universities" (click)="closeMenu()">🏫 Universidades</a></li>
+    <li><a routerLink="/professors" (click)="closeMenu()">👨‍🏫 Profesores</a></li>
+    <li><a routerLink="/departments" (click)="closeMenu()">🏢 Departamentos</a></li>
+    <li><a routerLink="/courses" (click)="closeMenu()">📖 Cursos</a></li>
+  </ul>
+</div>
+
+<!-- Fondo oscuro cuando el menú está abierto -->
+<div class="overlay" *ngIf="menuOpen" (click)="closeMenu()"></div>
+
+
     <router-outlet></router-outlet> <!-- ✅ Aquí se renderizarán las rutas -->
-  `
+  `,
+  styleUrls: ['../styles.css']
 })
-export class AppComponent {}
+export class AppComponent {
+  menuOpen = false;
+
+  toggleMenu() {
+    this.menuOpen = !this.menuOpen;
+  }
+
+  closeMenu() {
+    this.menuOpen = false;
+  }
+}
