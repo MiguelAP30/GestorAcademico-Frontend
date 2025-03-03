@@ -11,6 +11,8 @@ import { CommonModule } from '@angular/common';
 
 export class CourseComponent implements OnInit {
   courses: any[] = [];
+  selectedCourse: any = null;
+  modalType: string = '';
 
   constructor(private courseService: CourseService) {}
 
@@ -21,6 +23,7 @@ export class CourseComponent implements OnInit {
   loadCourses(): void {
     this.courseService.getCourses().subscribe(data => {
       this.courses = data;
+      console.log(data)
     });
   }
 
@@ -38,9 +41,21 @@ export class CourseComponent implements OnInit {
     });
   }
 
-  deleteCourse(id: string): void {
+  deleteCourse(id: number): void {
     this.courseService.deleteCourse(id).subscribe(() => {
       this.loadCourses();
     });
+  }
+
+  openModal(course: any, type: string) {
+    console.log('Curso seleccionado:', type); 
+    this.closeModal();
+    this.selectedCourse = course;
+    this.modalType = type;
+  }
+
+  closeModal() {
+    this.selectedCourse = null;
+    this.modalType = '';
   }
 }

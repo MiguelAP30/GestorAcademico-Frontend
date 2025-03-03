@@ -8,9 +8,71 @@
         <strong>{{ course.name }}</strong> - {{ course.description }}
       </div>
       <div class="course-actions">
+        <button (click)="openModal(course, 'prerequisites')">📖 Prerrequisitos</button>
+        <button (click)="openModal(course, 'professor')">👨‍🏫 Profesor</button>
+        <button (click)="openModal(course, 'schedule')">🕒 Horarios</button>
         <button (click)="editCourse(course)">✏️ Editar</button>
         <button class="delete" (click)="deleteCourse(course.id)">🗑️ Eliminar</button>
       </div>
     </li>
   </ul>
+</div>
+
+<div class="container">
+  <h2>Cursos</h2>
+  <button (click)="createCourse()">Agregar Curso</button>
+
+  <ul>
+    <li *ngFor="let course of courses">
+      <div class="course-info">
+        <strong>{{ course.name }}</strong> - {{ course.description }}
+      </div>
+      <div class="course-actions">
+        <button (click)="openModal(course, 'prerequisites')">📖 Prerrequisitos</button>
+        <button (click)="openModal(course, 'professor')">👨‍🏫 Profesor</button>
+        <button (click)="openModal(course, 'schedule')">🕒 Horarios</button>
+        <button (click)="editCourse(course)">✏️ Editar</button>
+        <button class="delete" (click)="deleteCourse(course.id)">🗑️ Eliminar</button>
+      </div>
+    </li>
+  </ul>
+</div>
+
+<!-- Modal -->
+<div *ngIf="selectedCourse" class="modal-overlay">
+  <div class="modal">
+    <h3 *ngIf="modalType === 'prerequisites'">Prerrequisitos de {{ selectedCourse.name }}</h3>
+    <h3 *ngIf="modalType === 'professor'">Profesor de {{ selectedCourse.name }}</h3>
+    <h3 *ngIf="modalType === 'schedule'">Horarios de {{ selectedCourse.name }}</h3>
+
+    <!-- Prerrequisitos -->
+    <div *ngIf="modalType === 'prerequisites'">
+      <ul *ngIf="selectedCourse.prerequisites.length > 0">
+        <li *ngFor="let prereq of selectedCourse.prerequisites">
+          {{ prereq.name }} - {{ prereq.description }}
+        </li>
+      </ul>
+      <p *ngIf="selectedCourse.prerequisites.length === 0">No tiene prerrequisitos</p>
+    </div>
+
+    <div *ngIf="modalType === 'professor'">
+      <p *ngIf="selectedCourse.professor">
+        <strong>{{ selectedCourse.professor.firstName }} {{ selectedCourse.professor.lastName }}</strong><br>
+        Departamento: {{ selectedCourse.professor.department?.name || 'No asignado' }}
+      </p>
+      <p *ngIf="!selectedCourse.professor">No tiene profesor asignado</p>
+    </div>
+    
+    <!-- Horarios -->
+    <div *ngIf="modalType === 'schedule'">
+      <ul *ngIf="selectedCourse.schedules.length > 0">
+        <li *ngFor="let schedule of selectedCourse.schedules">
+          {{ schedule.dayOfWeek }}: {{ schedule.startTime }} - {{ schedule.endTime }}
+        </li>
+      </ul>
+      <p *ngIf="selectedCourse.schedules.length === 0">No tiene horarios asignados</p>
+    </div>
+
+    <button (click)="closeModal()">Cerrar</button>
+  </div>
 </div>

@@ -13,7 +13,7 @@
     <li *ngFor="let professor of professors">
       <div class="professor-info">
         <strong>{{ professor.firstName }} {{ professor.lastName }}</strong>  
-        <span>(ID: {{ professor.identification }}, Dept: {{ professor.departmentId || 'N/A' }})</span>
+        <span>(ID: {{ professor.identification }}, Dept: {{ professor.department.name || 'N/A' }})</span>
       </div>
       <button class="delete" (click)="deleteProfessor(professor.identification)">🗑️ Eliminar</button>
     </li>

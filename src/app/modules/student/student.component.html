@@ -1,1 +1,28 @@
-<p>student works!</p>
+<div class="container">
+    <h2>Estudiantes</h2>
+  
+    <form (submit)="addStudent()" class="form-container">
+      <input type="text" [(ngModel)]="newStudent.identification" [ngModelOptions]="{standalone: true}" placeholder="Identificación" required>
+      <input type="text" [(ngModel)]="newStudent.firstName" [ngModelOptions]="{standalone: true}" placeholder="Nombre" required>
+      <input type="text" [(ngModel)]="newStudent.lastName" [ngModelOptions]="{standalone: true}" placeholder="Apellido" required>
+      <input type="date" [(ngModel)]="newStudent.birthDate" [ngModelOptions]="{standalone: true}" placeholder="Fecha de Nacimiento" required>
+      <button type="submit" 
+        [disabled]="!newStudent.identification.trim() || 
+                   !newStudent.firstName.trim() || 
+                   !newStudent.lastName.trim() ||
+                   !newStudent.birthDate.trim()">
+        Agregar
+      </button>
+    </form>
+  
+    <ul class="student-list">
+      <li *ngFor="let student of students">
+        <div class="student-info">
+          <strong>{{ student.firstName }} {{ student.lastName }}</strong>  
+          <span>(ID: {{ student.identification }}, Nacimiento: {{ student.birthDate }})</span>
+        </div>
+        <button class="delete" (click)="deleteStudent(student.identification)">🗑️ Eliminar</button>
+      </li>
+    </ul>
+  </div>
+  

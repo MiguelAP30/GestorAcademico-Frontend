@@ -24,6 +24,7 @@ export class ProfessorComponent {
   loadProfessors() {
     this.professorService.getProfessors().subscribe((data) => {
       this.professors = data;
+      console.log(data)
     });
   }
 

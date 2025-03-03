@@ -7,6 +7,7 @@
 
 h2 {
   color: #333;
+  margin-bottom: 20px;
 }
 
 button {
@@ -39,21 +40,146 @@ ul {
 
 li {
   background: #f8f9fa;
-  padding: 10px;
-  margin: 5px 0;
-  border-radius: 5px;
+  padding: 15px;
+  margin: 10px 0;
+  border-radius: 8px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease-in-out;
+}
+
+li:hover {
+  transform: scale(1.02);
 }
 
 .course-info {
-  flex-grow: 1;
   text-align: left;
+  font-size: 16px;
 }
 
 .course-actions {
   display: flex;
   gap: 10px;
+}
+
+.course-actions button {
+  margin-left: 5px;
+  padding: 8px 12px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background 0.3s ease;
+}
+
+.course-actions button:hover {
+  background: #ddd;
+}
+
+/* Modal */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+
+
+.modal {
+  background: white;
+  padding: 40px;
+  border-radius: 12px;
+  text-align: center;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  width: 80%;
+  max-width: 900px;
+  min-height: 400px;
+  max-height: 80vh;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  animation: slideIn 0.3s ease-in-out;
+  
+}
+
+.modal h3 {
+  font-size: 26px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.modal p, .modal ul li {
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+
+.modal button {
+  background: #007bff;
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 18px;
+  transition: background 0.3s ease;
+  align-self: center;
+  margin-top: auto;
+}
+
+.modal button:hover {
+  background: #0056b3;
+}
+
+/* Contenedor del modal del profesor con diseño en dos columnas */
+.professor-modal-content {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  justify-content: center;
+  text-align: left;
+}
+
+/* Estilos de la imagen del profesor */
+.professor-image img {
+  width: 120px;
+  height: auto;
+  border-radius: 10px;
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+/* Estilos del texto del profesor */
+.professor-info {
+  flex: 1;
+  font-size: 16px;
+  color: #333;
+}
+
+
+/* Animaciones */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateY(-20px);
+  }
+  to {
+    transform: translateY(0);
+  }
 }
