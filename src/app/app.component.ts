@@ -22,7 +22,7 @@ import { NgIf } from '@angular/common';
       <li><a routerLink="/departments" (click)="closeMenu()">🏢 Departamentos</a></li>
       <li><a routerLink="/courses" (click)="closeMenu()">📖 Cursos</a></li>
       <li><a routerLink="/" (click)="closeMenu()">✅ Prerrequisitos</a></li>
-      <li><a routerLink="/" (click)="closeMenu()">📝 Matrículas</a></li>
+      <li><a routerLink="/enrollments" (click)="closeMenu()">📝 Matrículas</a></li>
       <li><a routerLink="/" (click)="closeMenu()">📊 Evaluaciones</a></li>
       <li><a routerLink="/students" (click)="closeMenu()">🎓 Estudiantes</a></li>
     </ul>

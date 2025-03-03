@@ -1,0 +1,41 @@
+<div class="container">
+  <h2>Matrículas</h2>
+
+  <!-- Formulario para agregar matrícula -->
+  <form (submit)="addEnrollment()" class="form-container">
+    <input type="text" [(ngModel)]="newEnrollment.studentId" [ngModelOptions]="{standalone: true}" placeholder="ID del Estudiante" required>
+    <input type="number" [(ngModel)]="newEnrollment.courseId" [ngModelOptions]="{standalone: true}" placeholder="ID del Curso" required>
+    <input type="date" [(ngModel)]="newEnrollment.enrollmentDate" [ngModelOptions]="{standalone: true}" required>
+    <button type="submit" [disabled]="!newEnrollment.studentId.trim() || !newEnrollment.courseId">Agregar</button>
+  </form>
+
+  <!-- Lista de matrículas -->
+  <ul class="enrollment-list">
+    <li *ngFor="let enrollment of enrollments" class="enrollment-item">
+      <div class="enrollment-info">
+        <strong>ID Estudiante: {{ enrollment.student.identification }}</strong> - 
+        {{ enrollment.student.firstName }} {{ enrollment.student.lastName }}
+        <span>(Curso: {{ enrollment.course.name }}, Fecha: {{ enrollment.enrollmentDate }})</span>
+      </div>
+      <div class="buttons-container">
+        <button class="view-grades" (click)="openModal(enrollment)">📄 Ver Calificaciones</button>
+        <button class="delete" (click)="deleteEnrollment(enrollment.id)">🗑️ Eliminar</button>
+      </div>
+    </li>
+  </ul>
+
+  <!-- Modal de Calificaciones -->
+  <div *ngIf="selectedEnrollment" class="modal-overlay">
+    <div class="modal">
+      <button class="close-btn" (click)="closeModal()">✖</button>
+      <h3>Calificaciones de {{ selectedEnrollment.student.firstName }} {{ selectedEnrollment.student.lastName }}</h3>
+      <p class="course-name">Curso: {{ selectedEnrollment.course.name }}</p>
+      <ul class="grades-list">
+        <li *ngFor="let evaluation of selectedEnrollment.evaluations">
+            📅 {{ evaluation.evaluationDate }} - {{ evaluation.grade < 3 ? '❌' : '⭐' }} Nota: {{ evaluation.grade }}
+        </li>
+      </ul>
+      <button class="modal-close" (click)="closeModal()">Cerrar</button>
+    </div>
+  </div>
+</div>

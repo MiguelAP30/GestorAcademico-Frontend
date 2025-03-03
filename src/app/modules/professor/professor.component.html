@@ -1,6 +1,7 @@
 <div class="container">
   <h2>Profesores</h2>
 
+  <!-- Formulario para agregar profesor -->
   <form (submit)="addProfessor()" class="form-container">
     <input type="text" [(ngModel)]="newProfessor.identification" [ngModelOptions]="{standalone: true}" placeholder="Identificación" required>
     <input type="text" [(ngModel)]="newProfessor.firstName" [ngModelOptions]="{standalone: true}" placeholder="Nombre" required>
@@ -9,11 +10,12 @@
     <button type="submit" [disabled]="!newProfessor.identification.trim() || !newProfessor.firstName.trim() || !newProfessor.lastName.trim()">Agregar</button>
   </form>
 
+  <!-- Lista de profesores -->
   <ul class="professor-list">
     <li *ngFor="let professor of professors">
       <div class="professor-info">
         <strong>{{ professor.firstName }} {{ professor.lastName }}</strong>  
-        <span>(ID: {{ professor.identification }}, Dept: {{ professor.department.name || 'N/A' }})</span>
+        <span>(ID: {{ professor.identification }}, Dept: {{ professor.department?.name || 'N/A' }})</span>
       </div>
       <button class="delete" (click)="deleteProfessor(professor.identification)">🗑️ Eliminar</button>
     </li>
