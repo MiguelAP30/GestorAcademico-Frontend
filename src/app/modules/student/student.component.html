@@ -1,14 +1,8 @@
 <div class="container">
   <h2>Lista de Estudiantes</h2>
 
-  <!-- FORMULARIO PARA AGREGAR ESTUDIANTES -->
-  <div class="form-container">
-    <input type="text" placeholder="ID" [(ngModel)]="newStudent.identification">
-    <input type="text" placeholder="Nombre" [(ngModel)]="newStudent.firstName">
-    <input type="text" placeholder="Apellido" [(ngModel)]="newStudent.lastName">
-    <input type="date" [(ngModel)]="newStudent.birthDate">
-    <button (click)="addStudent()">Agregar</button>
-  </div>
+  <!-- BOTÓN PARA ABRIR MODAL DE CREACIÓN -->
+  <button class="add-btn" (click)="openCreateStudentModal()">Agregar Estudiante</button>
 
   <!-- LISTADO DE ESTUDIANTES -->
   <ul class="student-list">
@@ -18,32 +12,70 @@
       </div>
       <div class="button-group">
         <button class="courses" (click)="openCoursesModal(student)">📚 Cursos</button>
+        <button class="edit" (click)="openEditModal(student)">✏️ Editar</button>
         <button class="delete" (click)="deleteStudent(student.identification)">🗑 Eliminar</button>
       </div>
     </li>
   </ul>
-  
 </div>
 
-<!-- MODAL DE CURSOS Y NOTAS -->
-<div class="modal" *ngIf="selectedStudent">
+<!-- MODAL PARA CREAR ESTUDIANTE -->
+<div class="modal" *ngIf="showCreateStudentModal">
   <div class="modal-content">
-    <span class="close" (click)="closeModal()">&times;</span>
-    <h3>Cursos de {{ selectedStudent.firstName }} {{ selectedStudent.lastName }}</h3>
+    <button class="modal-close-btn" (click)="closeCreateStudentModal()">×</button>
+    <h3>Agregar Estudiante</h3>
+    <div class="form-container">
+      <div class="input-group">
+        <input type="text" placeholder="ID" [(ngModel)]="newStudent.identification">
+        <input type="text" placeholder="Nombre" [(ngModel)]="newStudent.firstName">
+      </div>
+      <div class="input-group">
+        <input type="text" placeholder="Apellido" [(ngModel)]="newStudent.lastName">
+        <input type="date" [(ngModel)]="newStudent.birthDate">
+      </div>
+      <button class="add-btn" (click)="addStudent()">Agregar</button>
+    </div>
+  </div>
+</div>
 
+
+<!-- MODAL DE EDICIÓN -->
+<div class="modal" *ngIf="selectedStudentForEdit">
+  <div class="modal-content">
+    <button class="modal-close-btn" (click)="closeEditModal()">×</button>
+    <h3>Editar Estudiante</h3>
+    <div class="form-container">
+      <div class="input-group">
+        <input type="text" placeholder="Nombre" [(ngModel)]="selectedStudentForEdit.firstName">
+        <input type="text" placeholder="Apellido" [(ngModel)]="selectedStudentForEdit.lastName">
+      </div>
+      <input type="date" [(ngModel)]="selectedStudentForEdit.birthDate">
+      <button class="edit-btn" (click)="updateStudent()">Guardar Cambios</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- MODAL DE CURSOS -->
+<div class="modal" *ngIf="selectedStudentForCourses">
+  <div class="modal-content">
+    <button class="modal-close-btn" (click)="closeCoursesModal()">×</button>
+    <h3>Cursos de {{ selectedStudentForCourses.firstName }} {{ selectedStudentForCourses.lastName }}</h3>
     <ul class="course-list">
-      <li *ngFor="let enrollment of selectedStudent.enrollments">
+      <li *ngFor="let enrollment of selectedStudentForCourses.enrollments">
         <div class="course-title" (click)="toggleEvaluations(enrollment.course.id)">
           📘 {{ enrollment.course.name }} ({{ enrollment.course.description }})
           <span *ngIf="expandedEnrollment[enrollment.course.id]">▼</span>
           <span *ngIf="!expandedEnrollment[enrollment.course.id]">▶</span>
         </div>
-
-        <!-- Evaluaciones -->
         <ul class="evaluation-list" *ngIf="expandedEnrollment[enrollment.course.id]">
           <li *ngFor="let evaluation of enrollment.evaluations" class="evaluation-item">
-            Nota: <strong>{{ evaluation.grade }}  -  📅 {{ evaluation.evaluationDate }}</strong>
+            Nota: <strong><span [ngClass]="{'approved': evaluation.grade >= 3, 'failed': evaluation.grade < 3}">
+              {{ evaluation.grade }}
+            </span> - {{ evaluation.evaluationDate }}</strong>
           </li>
+          
+      
         </ul>
       </li>
     </ul>

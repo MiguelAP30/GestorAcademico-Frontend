@@ -12,11 +12,12 @@ import { CommonModule, NgIf, NgFor } from "@angular/common";
 })
 export class StudentComponent {
   students: any[] = [];
+  selectedStudentForEdit: any = null;
+  selectedStudentForCourses: any = null;
+  showCreateStudentModal: boolean = false;
   newStudent = { identification: '', firstName: '', lastName: '', birthDate: '' };
-  
-  selectedStudent: any = null;  // ✅ Para almacenar el estudiante seleccionado
-  expandedEnrollment: any = {}; // ✅ Para controlar qué cursos están expandidos
-  
+  expandedEnrollment: { [key: number]: boolean } = {};
+
   constructor(private studentService: StudentService) {}
 
   ngOnInit() {
@@ -26,8 +27,15 @@ export class StudentComponent {
   loadStudents() {
     this.studentService.getStudents().subscribe((data) => {
       this.students = data;
-      console.log(data);
     });
+  }
+
+  openCreateStudentModal() {
+    this.showCreateStudentModal = true;
+  }
+
+  closeCreateStudentModal() {
+    this.showCreateStudentModal = false;
   }
 
   addStudent() {
@@ -39,6 +47,7 @@ export class StudentComponent {
     this.studentService.createStudent(this.newStudent).subscribe((student) => {
       this.students.push(student);
       this.newStudent = { identification: '', firstName: '', lastName: '', birthDate: '' };
+      this.closeCreateStudentModal();
     });
   }
 
@@ -48,19 +57,40 @@ export class StudentComponent {
     });
   }
 
-  // ✅ Método para abrir el modal y asignar el estudiante seleccionado
+  openEditModal(student: any) {
+    this.selectedStudentForEdit = { ...student };
+    this.selectedStudentForCourses = null;
+  }
+
+  updateStudent() {
+    if (!this.selectedStudentForEdit) return;
+
+    const updatedStudent = { ...this.selectedStudentForEdit };
+    delete updatedStudent.enrollments;
+
+    this.studentService.updateStudent(updatedStudent).subscribe((student:any) => {
+      const index = this.students.findIndex(s => s.identification === student.identification);
+      if (index !== -1) {
+        this.students[index] = student;
+      }
+      this.closeEditModal();
+    });
+  }
+
+  closeEditModal() {
+    this.selectedStudentForEdit = null;
+  }
+
   openCoursesModal(student: any) {
-    this.selectedStudent = student;
+    this.selectedStudentForCourses = student;
+    this.selectedStudentForEdit = null;
   }
 
-  // ✅ Método para cerrar el modal
-  closeModal() {
-    this.selectedStudent = null;
+  closeCoursesModal() {
+    this.selectedStudentForCourses = null;
   }
 
-  // ✅ Método para alternar la visibilidad de evaluaciones dentro del modal
-  toggleEvaluations(enrollmentId: number) {
-    if (enrollmentId === undefined) return;
-    this.expandedEnrollment[enrollmentId] = !this.expandedEnrollment[enrollmentId];
+  toggleEvaluations(courseId: number) {
+    this.expandedEnrollment[courseId] = !this.expandedEnrollment[courseId];
   }
 }
