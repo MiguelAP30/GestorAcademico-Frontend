@@ -1,34 +1,40 @@
 <div class="container">
-    <h2>Tipos de Evaluación</h2>
-    <button (click)="createEvaluationType()">Agregar Tipo de Evaluación</button>
-  
-    <ul>
-      <li *ngFor="let evaluation of evaluationTypes">
-        <div class="evaluation-info">
-          <strong>{{ evaluation.name }}</strong> - {{ evaluation.percentage }}%
-        </div>
-        <div class="evaluation-actions">
-          <button (click)="editEvaluationType(evaluation)">✏️ Editar</button>
-          <button class="delete" (click)="deleteEvaluationType(evaluation.id)">🗑️ Eliminar</button>
-        </div>
-      </li>
-    </ul>
-  </div>
-  
-  <!-- Modal -->
-  <div *ngIf="selectedEvaluationType" class="modal-overlay">
-    <div class="modal">
-      <h3 *ngIf="!isEditing">Agregar Tipo de Evaluación</h3>
-      <h3 *ngIf="isEditing">Editar Tipo de Evaluación</h3>
-  
-      <label>Nombre:</label>
-      <input [(ngModel)]="selectedEvaluationType.name" type="text" required />
-  
-      <label>Porcentaje:</label>
-      <input [(ngModel)]="selectedEvaluationType.percentage" type="number" min="0" max="100" required />
-  
-      <button (click)="saveEvaluationType()">Guardar</button>
-      <button (click)="closeModal()">Cancelar</button>
+  <h2>Tipos de Evaluación</h2>
+
+  <div >
+    <button class="add-button" (click)="createEvaluationType()">✅ Agregar Tipo de Evaluación</button>
+  <ul>
+    <li *ngFor="let evaluation of evaluationTypes">
+      <div class="evaluation-info">
+        <strong>{{ evaluation.name }}</strong> - {{ evaluation.percentage }}%
+      </div>
+      <div class="evaluation-actions">
+        <button class="edit" (click)="editEvaluationType(evaluation)">✏️ Editar</button>
+        <button class="delete" (click)="deleteEvaluationType(evaluation.id)">🗑️ Eliminar</button>
+      </div>
+    </li>
+  </ul>
+</div>
+
+<!-- Modal -->
+<div *ngIf="selectedEvaluationType" class="modal-overlay" (click)="closeModalOutside($event)">
+  <div class="modal" (click)="$event.stopPropagation()">
+    <h3>{{ isEditing ? 'Editar Tipo de Evaluación' : 'Agregar Tipo de Evaluación' }}</h3>
+
+    <div class="form-group">
+      <label for="name">Nombre:</label>
+      <input id="name" [(ngModel)]="selectedEvaluationType.name" type="text" required />
+    </div>
+
+    <div class="form-group">
+      <label for="percentage">Porcentaje:</label>
+      <input id="percentage" [(ngModel)]="selectedEvaluationType.percentage" type="number" min="0" max="100" required />
+    </div>
+
+    <div class="modal-buttons">
+      <button class="save" (click)="saveEvaluationType()">💾 Guardar</button>
+      <button class="cancel" (click)="closeModal()">❌ Cancelar</button>
     </div>
   </div>
-  
+</div>
+

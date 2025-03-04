@@ -1,28 +1,51 @@
 <div class="container">
-    <h2>Estudiantes</h2>
+  <h2>Lista de Estudiantes</h2>
+
+  <!-- FORMULARIO PARA AGREGAR ESTUDIANTES -->
+  <div class="form-container">
+    <input type="text" placeholder="ID" [(ngModel)]="newStudent.identification">
+    <input type="text" placeholder="Nombre" [(ngModel)]="newStudent.firstName">
+    <input type="text" placeholder="Apellido" [(ngModel)]="newStudent.lastName">
+    <input type="date" [(ngModel)]="newStudent.birthDate">
+    <button (click)="addStudent()">Agregar</button>
+  </div>
+
+  <!-- LISTADO DE ESTUDIANTES -->
+  <ul class="student-list">
+    <li *ngFor="let student of students">
+      <div class="student-info">
+        <strong>{{ student.firstName }} {{ student.lastName }}</strong> - ID: {{ student.identification }}
+      </div>
+      <div class="button-group">
+        <button class="courses" (click)="openCoursesModal(student)">📚 Cursos</button>
+        <button class="delete" (click)="deleteStudent(student.identification)">🗑 Eliminar</button>
+      </div>
+    </li>
+  </ul>
   
-    <form (submit)="addStudent()" class="form-container">
-      <input type="text" [(ngModel)]="newStudent.identification" [ngModelOptions]="{standalone: true}" placeholder="Identificación" required>
-      <input type="text" [(ngModel)]="newStudent.firstName" [ngModelOptions]="{standalone: true}" placeholder="Nombre" required>
-      <input type="text" [(ngModel)]="newStudent.lastName" [ngModelOptions]="{standalone: true}" placeholder="Apellido" required>
-      <input type="date" [(ngModel)]="newStudent.birthDate" [ngModelOptions]="{standalone: true}" placeholder="Fecha de Nacimiento" required>
-      <button type="submit" 
-        [disabled]="!newStudent.identification.trim() || 
-                   !newStudent.firstName.trim() || 
-                   !newStudent.lastName.trim() ||
-                   !newStudent.birthDate.trim()">
-        Agregar
-      </button>
-    </form>
-  
-    <ul class="student-list">
-      <li *ngFor="let student of students">
-        <div class="student-info">
-          <strong>{{ student.firstName }} {{ student.lastName }}</strong>  
-          <span>(ID: {{ student.identification }}, Nacimiento: {{ student.birthDate }})</span>
+</div>
+
+<!-- MODAL DE CURSOS Y NOTAS -->
+<div class="modal" *ngIf="selectedStudent">
+  <div class="modal-content">
+    <span class="close" (click)="closeModal()">&times;</span>
+    <h3>Cursos de {{ selectedStudent.firstName }} {{ selectedStudent.lastName }}</h3>
+
+    <ul class="course-list">
+      <li *ngFor="let enrollment of selectedStudent.enrollments">
+        <div class="course-title" (click)="toggleEvaluations(enrollment.course.id)">
+          📘 {{ enrollment.course.name }} ({{ enrollment.course.description }})
+          <span *ngIf="expandedEnrollment[enrollment.course.id]">▼</span>
+          <span *ngIf="!expandedEnrollment[enrollment.course.id]">▶</span>
         </div>
-        <button class="delete" (click)="deleteStudent(student.identification)">🗑️ Eliminar</button>
+
+        <!-- Evaluaciones -->
+        <ul class="evaluation-list" *ngIf="expandedEnrollment[enrollment.course.id]">
+          <li *ngFor="let evaluation of enrollment.evaluations" class="evaluation-item">
+            Nota: <strong>{{ evaluation.grade }}  -  📅 {{ evaluation.evaluationDate }}</strong>
+          </li>
+        </ul>
       </li>
     </ul>
   </div>
-  
+</div>

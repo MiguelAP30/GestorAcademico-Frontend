@@ -1,5 +1,4 @@
-// /src/modules/university/university.component.ts
-import { Component, ChangeDetectionStrategy  } from '@angular/core';
+import { Component, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { UniversityService } from '../../services/university.service';
@@ -7,7 +6,7 @@ import { UniversityService } from '../../services/university.service';
 @Component({
   selector: 'app-university',
   standalone: true,
-  imports: [CommonModule, FormsModule], // ❌ Elimina HttpClientModule, ya está en provideHttpClient()
+  imports: [CommonModule, FormsModule],
   templateUrl: './university.component.html',
   styleUrls: ['./university.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -16,7 +15,7 @@ export class UniversityComponent {
   universities: any[] = [];
   newUniversity = { name: '' };
 
-  constructor(private universityService: UniversityService) {}
+  constructor(private universityService: UniversityService, private cdr: ChangeDetectorRef) {}
 
   ngOnInit() {
     this.loadUniversities();
@@ -24,7 +23,8 @@ export class UniversityComponent {
 
   loadUniversities() {
     this.universityService.getUniversities().subscribe((data) => {
-      this.universities = data;
+      this.universities = [...data]; // Crear una nueva referencia del array
+      this.cdr.markForCheck(); // Forzar actualización de la vista
     });
   }
 

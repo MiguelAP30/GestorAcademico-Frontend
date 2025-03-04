@@ -48,14 +48,13 @@ export class EvaluationTypeComponent implements OnInit {
           this.closeModal();
         });
     } else {
-      
-      this.evaluationTypeService.create(this.selectedEvaluationType)
-        .subscribe(() => {
-          this.newEvaluationType = { name: '', percentage: 0 };
-          this.closeModal();
-        });
-      console.log(this.newEvaluationType);
-    }
+      console.log("Datos a enviar:", this.selectedEvaluationType); // Depuración
+    
+      this.evaluationTypeService.create(this.selectedEvaluationType).subscribe(() => {
+        this.loadEvaluationTypes();
+        this.closeModal();
+      })
+    }    
   }
 
   deleteEvaluationType(id: number) {
@@ -65,5 +64,11 @@ export class EvaluationTypeComponent implements OnInit {
   closeModal() {
     this.selectedEvaluationType = null;
     this.isEditing = false;
+  }
+
+  closeModalOutside(event: MouseEvent) {
+    if (event.target === event.currentTarget) {
+      this.closeModal();
+    }
   }
 }
