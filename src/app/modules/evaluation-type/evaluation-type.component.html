@@ -1,39 +1,90 @@
 <div class="container">
-  <h2>Tipos de Evaluación</h2>
+  <div class="header">
+    <h2>Tipos de Evaluación</h2>
+    <button class="add-btn" (click)="createEvaluationType()">
+      <i class="fas fa-plus"></i> Agregar Tipo de Evaluación
+    </button>
+  </div>
 
-  <div >
-    <button class="add-button" (click)="createEvaluationType()">✅ Agregar Tipo de Evaluación</button>
-  <ul>
+  <ul class="evaluation-list">
     <li *ngFor="let evaluation of evaluationTypes">
-      <div class="evaluation-info">
-        <strong>{{ evaluation.name }}</strong> - {{ evaluation.percentage }}%
-      </div>
-      <div class="evaluation-actions">
-        <button class="edit" (click)="editEvaluationType(evaluation)">✏️ Editar</button>
-        <button class="delete" (click)="deleteEvaluationType(evaluation.id)">🗑️ Eliminar</button>
+      <div class="evaluation-card">
+        <div class="evaluation-info">
+          <strong>{{ evaluation.name }}</strong>
+          <div class="evaluation-details">
+            <span class="percentage">
+              <i class="fas fa-percentage"></i>
+              Porcentaje: {{ evaluation.percentage }}%
+            </span>
+          </div>
+        </div>
+        <div class="button-group">
+          <button class="edit" (click)="editEvaluationType(evaluation)">
+            <i class="fas fa-edit"></i> Editar
+          </button>
+          <button class="delete" (click)="deleteEvaluationType(evaluation.id)">
+            <i class="fas fa-trash"></i> Eliminar
+          </button>
+        </div>
       </div>
     </li>
   </ul>
-</div>
 
-<!-- Modal -->
-<div *ngIf="selectedEvaluationType" class="modal-overlay" (click)="closeModalOutside($event)">
-  <div class="modal" (click)="$event.stopPropagation()">
-    <h3>{{ isEditing ? 'Editar Tipo de Evaluación' : 'Agregar Tipo de Evaluación' }}</h3>
+  <!-- Modal para Crear/Editar Tipo de Evaluación -->
+  <div class="modal-overlay" *ngIf="selectedEvaluationType" (click)="closeModalOutside($event)">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>{{ isEditing ? 'Editar Tipo de Evaluación' : 'Agregar Tipo de Evaluación' }}</h3>
+        <button class="modal-close-btn" (click)="closeModal()">×</button>
+      </div>
+      <div class="form-container">
+        <div class="input-group">
+          <label for="name">Nombre</label>
+          <input 
+            id="name" 
+            [(ngModel)]="selectedEvaluationType.name" 
+            type="text" 
+            placeholder="Ingrese el nombre"
+            required
+          />
+        </div>
 
-    <div class="form-group">
-      <label for="name">Nombre:</label>
-      <input id="name" [(ngModel)]="selectedEvaluationType.name" type="text" required />
-    </div>
+        <div class="input-group">
+          <div class="percentage-header">
+            <label for="percentage">Porcentaje</label>
+            <span class="available-percentage" [class.warning]="getRemainingPercentage() < 20">
+              Disponible: {{ getRemainingPercentage() }}%
+            </span>
+          </div>
+          <div class="percentage-input">
+            <input 
+              id="percentage" 
+              [(ngModel)]="selectedEvaluationType.percentage" 
+              type="number" 
+              [min]="0" 
+              [max]="selectedEvaluationType.maxPercentage"
+              placeholder="Ingrese el porcentaje"
+              [class.invalid]="!validatePercentage(selectedEvaluationType.percentage)"
+              required 
+            />
+            <span class="percentage-symbol">%</span>
+          </div>
+          <div class="percentage-validation" *ngIf="!validatePercentage(selectedEvaluationType.percentage)">
+            <i class="fas fa-exclamation-circle"></i>
+            El porcentaje máximo permitido es {{ selectedEvaluationType.maxPercentage }}%
+          </div>
+        </div>
 
-    <div class="form-group">
-      <label for="percentage">Porcentaje:</label>
-      <input id="percentage" [(ngModel)]="selectedEvaluationType.percentage" type="number" min="0" max="100" required />
-    </div>
-
-    <div class="modal-buttons">
-      <button class="save" (click)="saveEvaluationType()">💾 Guardar</button>
-      <button class="cancel" (click)="closeModal()">❌ Cancelar</button>
+        <button 
+          class="modal-submit-btn" 
+          (click)="saveEvaluationType()"
+          [disabled]="!selectedEvaluationType.name.trim() || 
+                     !validatePercentage(selectedEvaluationType.percentage) ||
+                     selectedEvaluationType.percentage <= 0">
+          <i class="fas fa-save"></i>
+          {{ isEditing ? 'Guardar Cambios' : 'Crear Tipo de Evaluación' }}
+        </button>
+      </div>
     </div>
   </div>
 </div>

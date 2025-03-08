@@ -1,0 +1,265 @@
+.container {
+  width: 80%;
+  margin: auto;
+  padding: 20px;
+  font-family: Arial, sans-serif;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+h2 {
+  color: #2c3e50;
+  margin: 0;
+  font-size: 1.5em;
+}
+
+.add-btn {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.add-btn:hover {
+  background-color: #0056b3;
+  transform: translateY(-2px);
+}
+
+.prerequisite-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.prerequisite-card {
+  background: white;
+  padding: 15px 20px;
+  margin: 10px 0;
+  border-radius: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.prerequisite-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.prerequisite-info {
+  text-align: left;
+  flex-grow: 1;
+}
+
+.prerequisite-info strong {
+  display: block;
+  color: #2c3e50;
+  font-size: 1.1em;
+  margin-bottom: 4px;
+}
+
+.prerequisite-details {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.prerequisite-details span {
+  color: #7f8c8d;
+  font-size: 0.9em;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.button-group {
+  display: flex;
+  gap: 10px;
+}
+
+.button-group button {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  color: white;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+button.edit {
+  background-color: #007bff;
+}
+
+button.edit:hover {
+  background-color: #0056b3;
+}
+
+button.delete {
+  background-color: #e74c3c;
+}
+
+button.delete:hover {
+  background-color: #c0392b;
+}
+
+/* Modal Styles */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal {
+  background: white;
+  padding: 25px;
+  border-radius: 15px;
+  width: 90%;
+  max-width: 500px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.modal-header h3 {
+  margin: 0;
+  color: #2c3e50;
+  font-size: 1.5em;
+}
+
+.modal-close-btn {
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: #95a5a6;
+  cursor: pointer;
+  padding: 0;
+}
+
+.modal-close-btn:hover {
+  color: #7f8c8d;
+}
+
+.form-container {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  text-align: left;
+}
+
+.input-group label {
+  color: #2c3e50;
+  font-weight: 600;
+}
+
+.input-group select {
+  padding: 12px;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 14px;
+  width: 100%;
+  transition: border-color 0.3s ease;
+  background-color: white;
+  cursor: pointer;
+}
+
+.input-group select:focus {
+  outline: none;
+  border-color: #3498db;
+}
+
+.input-group select:disabled {
+  background-color: #f5f6fa;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.input-group select.invalid {
+  border-color: #e74c3c;
+}
+
+.helper-text {
+  color: #7f8c8d;
+  font-size: 0.85em;
+  margin-top: 4px;
+}
+
+.modal-submit-btn {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 12px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.3s ease;
+  margin-top: 10px;
+}
+
+.modal-submit-btn:hover {
+  background-color: #0056b3;
+  transform: translateY(-2px);
+}
+
+.modal-submit-btn:disabled {
+  background-color: #95a5a6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.no-prerequisites {
+  text-align: center;
+  padding: 30px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  color: #666;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.no-prerequisites i {
+  font-size: 2em;
+  color: #adb5bd;
+}

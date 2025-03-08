@@ -14,6 +14,8 @@ import { UniversityService } from '../../services/university.service';
 export class UniversityComponent {
   universities: any[] = [];
   newUniversity = { name: '' };
+  showCreateUniversityModal = false;
+  selectedUniversityForEdit: any = null;
 
   constructor(private universityService: UniversityService, private cdr: ChangeDetectorRef) {}
 
@@ -23,28 +25,55 @@ export class UniversityComponent {
 
   loadUniversities() {
     this.universityService.getUniversities().subscribe((data) => {
-      this.universities = [...data]; // Crear una nueva referencia del array
-      this.cdr.markForCheck(); // Forzar actualización de la vista
+      this.universities = [...data];
+      this.cdr.markForCheck();
     });
+  }
+
+  openCreateUniversityModal() {
+    this.showCreateUniversityModal = true;
+    this.cdr.markForCheck();
+  }
+
+  closeCreateUniversityModal() {
+    this.showCreateUniversityModal = false;
+    this.newUniversity = { name: '' };
+    this.cdr.markForCheck();
+  }
+
+  openEditUniversityModal(university: any) {
+    this.selectedUniversityForEdit = { ...university };
+    this.cdr.markForCheck();
+  }
+
+  closeEditUniversityModal() {
+    this.selectedUniversityForEdit = null;
+    this.cdr.markForCheck();
   }
 
   addUniversity() {
     if (!this.newUniversity.name.trim()) return;
-    console.log('Agregando universidad:', this.newUniversity.name);
+    console.log(this.newUniversity);
     
     this.universityService.createUniversity(this.newUniversity).subscribe(() => {
-      console.log('Universidad agregada correctamente');
-      this.newUniversity.name = '';
+      this.closeCreateUniversityModal();
       this.loadUniversities();
     }, error => console.error('Error al agregar universidad', error));
   }
+
+  updateUniversity() {
+    if (!this.selectedUniversityForEdit.name.trim()) return;
+
+    this.universityService.updateUniversity(this.selectedUniversityForEdit.id, this.selectedUniversityForEdit).subscribe(() => {
+      this.closeEditUniversityModal();
+      this.loadUniversities();
+    }, error => console.error('Error al actualizar universidad', error));
+  }
   
   deleteUniversity(id: number) {
-    console.log('Eliminando universidad con ID:', id);
+      this.universityService.deleteUniversity(id).subscribe(() => {
+        this.loadUniversities();
+      }, error => console.error('Error al eliminar universidad', error));
     
-    this.universityService.deleteUniversity(id).subscribe(() => {
-      console.log('Universidad eliminada correctamente');
-      this.loadUniversities();
-    }, error => console.error('Error al eliminar universidad', error));
   }
 }

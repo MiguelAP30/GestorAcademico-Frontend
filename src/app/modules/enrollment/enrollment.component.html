@@ -1,41 +1,155 @@
 <div class="container">
-  <h2>Matrículas</h2>
-
-  <!-- Formulario para agregar matrícula -->
-  <form (submit)="addEnrollment()" class="form-container">
-    <input type="text" [(ngModel)]="newEnrollment.studentId" [ngModelOptions]="{standalone: true}" placeholder="ID del Estudiante" required>
-    <input type="number" [(ngModel)]="newEnrollment.courseId" [ngModelOptions]="{standalone: true}" placeholder="ID del Curso" required>
-    <input type="date" [(ngModel)]="newEnrollment.enrollmentDate" [ngModelOptions]="{standalone: true}" required>
-    <button type="submit" [disabled]="!newEnrollment.studentId.trim() || !newEnrollment.courseId">Agregar</button>
-  </form>
+  <div class="header">
+    <h2>Matrículas</h2>
+    <button class="add-btn" (click)="openCreateEnrollmentModal()" style="margin-left: 15px; width: fit-content;">
+      <i class="fas fa-plus"></i> Agregar Matrícula
+    </button>
+  </div>
 
   <!-- Lista de matrículas -->
   <ul class="enrollment-list">
-    <li *ngFor="let enrollment of enrollments" class="enrollment-item">
-      <div class="enrollment-info">
-        <strong>ID Estudiante: {{ enrollment.student.identification }}</strong> - 
-        {{ enrollment.student.firstName }} {{ enrollment.student.lastName }}
-        <span>(Curso: {{ enrollment.course.name }}, Fecha: {{ enrollment.enrollmentDate }})</span>
-      </div>
-      <div class="buttons-container">
-        <button class="view-grades" (click)="openModal(enrollment)">📄 Ver Calificaciones</button>
-        <button class="delete" (click)="deleteEnrollment(enrollment.id)">🗑️ Eliminar</button>
+    <li *ngFor="let enrollment of enrollments">
+      <div class="enrollment-card">
+        <div class="enrollment-info">
+          <strong>{{ enrollment.student.firstName }} {{ enrollment.student.lastName }}</strong>
+          <div class="enrollment-details">
+            <span>ID Estudiante: {{ enrollment.student.identification }}</span>
+            <span>Curso: {{ enrollment.course.name }}</span>
+            <span>Fecha: {{ enrollment.enrollmentDate }}</span>
+          </div>
+        </div>
+        <div class="button-group">
+          <button class="courses" (click)="openModal(enrollment)">
+            <i class="fas fa-book"></i> Ver Calificaciones
+          </button>
+          <button class="edit" (click)="openEditEnrollmentModal(enrollment)">
+            <i class="fas fa-edit"></i> Editar
+          </button>
+          <button class="delete" (click)="deleteEnrollment(enrollment.id)">
+            <i class="fas fa-trash"></i> Eliminar
+          </button>
+        </div>
       </div>
     </li>
   </ul>
 
-  <!-- Modal de Calificaciones -->
-  <div *ngIf="selectedEnrollment" class="modal-overlay">
+  <!-- Modal para Crear Matrícula -->
+  <div class="modal-overlay" *ngIf="showCreateEnrollmentModal">
     <div class="modal">
-      <button class="close-btn" (click)="closeModal()">✖</button>
-      <h3>Calificaciones de {{ selectedEnrollment.student.firstName }} {{ selectedEnrollment.student.lastName }}</h3>
-      <p class="course-name">Curso: {{ selectedEnrollment.course.name }}</p>
-      <ul class="grades-list">
-        <li *ngFor="let evaluation of selectedEnrollment.evaluations">
-            📅 {{ evaluation.evaluationDate }} - {{ evaluation.grade < 3 ? '❌' : '⭐' }} Nota: {{ evaluation.grade }}
-        </li>
-      </ul>
-      <button class="modal-close" (click)="closeModal()">Cerrar</button>
+      <div class="modal-header">
+        <h3>Crear Nueva Matrícula</h3>
+        <button class="modal-close-btn" (click)="closeCreateEnrollmentModal()">×</button>
+      </div>
+      <form (submit)="addEnrollment()" class="form-container">
+        <div class="input-group">
+          <label>Estudiante</label>
+          <select [(ngModel)]="newEnrollment.studentId" [ngModelOptions]="{standalone: true}" required>
+            <option value="">Seleccione un estudiante</option>
+            <option *ngFor="let student of students" [value]="student.identification">
+              {{ student.firstName }} {{ student.lastName }} - {{ student.identification }}
+            </option>
+          </select>
+        </div>
+        <div class="input-group">
+          <label>Curso</label>
+          <select [(ngModel)]="newEnrollment.courseId" [ngModelOptions]="{standalone: true}" required>
+            <option value="">Seleccione un curso</option>
+            <option *ngFor="let course of courses" [value]="course.id">
+              {{ course.name }}
+            </option>
+          </select>
+        </div>
+        <div class="input-group">
+          <label>Fecha de Matrícula</label>
+          <input type="date" [(ngModel)]="newEnrollment.enrollmentDate" [ngModelOptions]="{standalone: true}" required>
+        </div>
+        <button type="submit" class="modal-submit-btn" [disabled]="!newEnrollment.studentId || !newEnrollment.courseId">
+          Crear Matrícula
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal para Editar Matrícula -->
+  <div class="modal-overlay" *ngIf="selectedEnrollmentForEdit">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>Editar Matrícula</h3>
+        <button class="modal-close-btn" (click)="closeEditEnrollmentModal()">×</button>
+      </div>
+      <form (submit)="updateEnrollment()" class="form-container">
+        <div class="input-group">
+          <label>Estudiante</label>
+          <select [(ngModel)]="selectedEnrollmentForEdit.studentId" [ngModelOptions]="{standalone: true}" required>
+            <option value="">Seleccione un estudiante</option>
+            <option *ngFor="let student of students" [value]="student.identification">
+              {{ student.firstName }} {{ student.lastName }} - {{ student.identification }}
+            </option>
+          </select>
+        </div>
+        <div class="input-group">
+          <label>Curso</label>
+          <select [(ngModel)]="selectedEnrollmentForEdit.courseId" [ngModelOptions]="{standalone: true}" required>
+            <option value="">Seleccione un curso</option>
+            <option *ngFor="let course of courses" [value]="course.id">
+              {{ course.name }}
+            </option>
+          </select>
+        </div>
+        <div class="input-group">
+          <label>Fecha de Matrícula</label>
+          <input type="date" [(ngModel)]="selectedEnrollmentForEdit.enrollmentDate" [ngModelOptions]="{standalone: true}" required>
+        </div>
+        <button type="submit" class="modal-submit-btn" [disabled]="!selectedEnrollmentForEdit.studentId || !selectedEnrollmentForEdit.courseId">
+          Actualizar Matrícula
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal de Calificaciones -->
+  <div class="modal-overlay" *ngIf="selectedEnrollment">
+    <div class="modal grades-modal">
+      <div class="modal-header">
+        <div class="student-info-header">
+          <h3>Calificaciones de {{ selectedEnrollment.student.firstName }} {{ selectedEnrollment.student.lastName }}</h3>
+          <span class="course-name">{{ selectedEnrollment.course.name }}</span>
+        </div>
+        <button class="modal-close-btn" (click)="closeModal()">×</button>
+      </div>
+      <div class="grades-container">
+        <div class="grades-summary">
+          <div class="average-grade">
+            <span class="label">Promedio</span>
+            <span class="value">{{ getAverageGrade(selectedEnrollment.evaluations) | number:'1.1-1' }}</span>
+          </div>
+          <div class="status" [ngClass]="{'passing': getAverageGrade(selectedEnrollment.evaluations) >= 3, 'failing': getAverageGrade(selectedEnrollment.evaluations) < 3}">
+            {{ getAverageGrade(selectedEnrollment.evaluations) >= 3 ? 'Aprobando' : 'Reprobando' }}
+          </div>
+        </div>
+        <div class="grades-list">
+          <div class="grade-item" *ngFor="let evaluation of selectedEnrollment.evaluations">
+            <div class="grade-info">
+              <div class="grade-date">
+                <i class="fas fa-calendar"></i>
+                <span>{{ evaluation.evaluationDate | date:'dd/MM/yyyy' }}</span>
+              </div>
+              <div class="grade-value" [ngClass]="{'passing': evaluation.grade >= 3, 'failing': evaluation.grade < 3}">
+                {{ evaluation.grade.toFixed(1) }}
+              </div>
+            </div>
+            <div class="grade-status">
+              <i [class]="evaluation.grade >= 3 ? 'fas fa-check-circle' : 'fas fa-times-circle'"
+                 [ngClass]="{'passing': evaluation.grade >= 3, 'failing': evaluation.grade < 3}">
+              </i>
+            </div>
+          </div>
+          <div class="no-grades" *ngIf="selectedEnrollment.evaluations.length === 0">
+            <i class="fas fa-info-circle"></i>
+            <span>No hay calificaciones registradas</span>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>

@@ -9,6 +9,8 @@ export const appRoutes: Routes = [
   { path: 'courses', loadComponent: () => import('./modules/course/course.component').then(m => m.CourseComponent) },
   { path: 'students', loadComponent: () => import('./modules/student/student.component').then(m => m.StudentComponent) },
   { path: 'evaluation-type', loadComponent: () => import('./modules/evaluation-type/evaluation-type.component').then(m => m.EvaluationTypeComponent) },
-  { path: 'enrollments', loadComponent: () => import('./modules/enrollment/enrollment.component').then(m => m.EnrollmentComponent) }
+  { path: 'enrollments', loadComponent: () => import('./modules/enrollment/enrollment.component').then(m => m.EnrollmentComponent) },
+  { path: 'prerequisites', loadComponent: () => import('./modules/prerequisite/prerequisite.component').then(m => m.PrerequisiteComponent) },
+  { path: 'evaluations', loadComponent: () => import('./modules/evaluation/evaluation.component').then(m => m.EvaluationComponent) }
 ];
 

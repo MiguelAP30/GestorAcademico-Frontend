@@ -1,23 +1,64 @@
 <div class="container">
-  <h2>Universidades</h2>
-
-  <form (submit)="addUniversity()" class="form-container">
-    <input 
-      type="text" 
-      [(ngModel)]="newUniversity.name" 
-      [ngModelOptions]="{standalone: true}" 
-      placeholder="Nombre de la universidad" 
-      required
-    >
-    <button type="submit" [disabled]="!newUniversity.name.trim()">Agregar</button>
-  </form>
+  <div class="header">
+    <h2>Lista de Universidades</h2>
+    <button class="add-btn" (click)="openCreateUniversityModal()" style="margin-left: 15px; width: fit-content;">
+      <i class="fas fa-plus"></i> Agregar Universidad
+    </button>
+  </div>
 
   <ul class="university-list">
     <li *ngFor="let university of universities">
-      <div class="university-info">
-        <strong>{{ university.name }}</strong>
+      <div class="university-card">
+        <div class="university-info">
+          <strong>{{ university.name }}</strong>
+        </div>
+        <div class="button-group">
+          <button class="edit" (click)="openEditUniversityModal(university)">
+            <i class="fas fa-edit"></i> Editar
+          </button>
+          <button class="delete" (click)="deleteUniversity(university.id)" (click)="deleteUniversity(university.id)">
+            <i class="fas fa-trash"></i> Eliminar
+          </button>
+        </div>
       </div>
-      <button class="delete" (click)="deleteUniversity(university.id)">🗑️ Eliminar</button>
     </li>
   </ul>
+</div>
+
+<!-- Modal para Crear Universidad -->
+<div class="modal-overlay" *ngIf="showCreateUniversityModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>Agregar Universidad</h3>
+      <button class="modal-close-btn" (click)="closeCreateUniversityModal()">×</button>
+    </div>
+    <div class="form-container">
+      <div class="input-group">
+        <label>Nombre</label>
+        <input type="text" placeholder="Ingrese nombre" [(ngModel)]="newUniversity.name">
+      </div>
+      <button class="add-btn modal-submit-btn" (click)="addUniversity()">
+        <i class="fas fa-plus"></i> Agregar Universidad
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal para Editar Universidad -->
+<div class="modal-overlay" *ngIf="selectedUniversityForEdit">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>Editar Universidad</h3>
+      <button class="modal-close-btn" (click)="closeEditUniversityModal()">×</button>
+    </div>
+    <div class="form-container">
+      <div class="input-group">
+        <label>Nombre</label>
+        <input type="text" placeholder="Ingrese nombre" [(ngModel)]="selectedUniversityForEdit.name">
+      </div>
+      <button class="edit-btn modal-submit-btn" (click)="updateUniversity()">
+        <i class="fas fa-save"></i> Guardar Cambios
+      </button>
+    </div>
+  </div>
 </div>

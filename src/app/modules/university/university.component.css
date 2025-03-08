@@ -1,70 +1,195 @@
 .container {
-    width: 80%;
-    margin: auto;
-    text-align: center;
-    font-family: Arial, sans-serif;
-  }
-  
-  h2 {
-    color: #333;
-    margin-bottom: 20px;
-  }
-  
-  .form-container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    justify-content: center;
-    margin-bottom: 20px;
-  }
-  
-  input {
-    padding: 8px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    font-size: 14px;
-  }
-  
-  button {
-    background-color: #007bff;
-    color: white;
-    border: none;
-    padding: 8px 15px;
-    cursor: pointer;
-    border-radius: 5px;
-    font-size: 14px;
-    transition: background 0.3s ease-in-out;
-  }
-  
-  button:hover {
-    background-color: #0056b3;
-  }
-  
-  button.delete {
-    background-color: #dc3545;
-  }
-  
-  button.delete:hover {
-    background-color: #a71d2a;
-  }
-  
-  .university-list {
-    list-style: none;
-    padding: 0;
-  }
-  
-  .university-list li {
-    background: #f8f9fa;
-    padding: 10px;
-    margin: 5px 0;
-    border-radius: 5px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  }
-  
-  .university-info {
-    text-align: left;
-  }
-  
+  width: 80%;
+  margin: auto;
+  text-align: center;
+  font-family: Arial, sans-serif;
+  padding: 20px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+h2 {
+  color: #2c3e50;
+  margin: 0;
+  font-size: 1.5em;
+}
+
+.university-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.university-card {
+  background: white;
+  padding: 15px 20px;
+  margin: 10px 0;
+  border-radius: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.university-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.university-info {
+  text-align: left;
+  flex-grow: 1;
+}
+
+.university-info strong {
+  display: block;
+  color: #2c3e50;
+  font-size: 1.1em;
+  margin-bottom: 4px;
+}
+
+.university-info span {
+  color: #7f8c8d;
+  font-size: 0.9em;
+}
+
+.button-group {
+  display: flex;
+  gap: 10px;
+}
+
+button {
+  background-color: #3498db;
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  cursor: pointer;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+button:hover {
+  background-color: #2980b9;
+  transform: translateY(-2px);
+}
+
+button:disabled {
+  background-color: #95a5a6;
+  cursor: not-allowed;
+}
+
+button.delete {
+  background-color: #e74c3c;
+}
+
+button.delete:hover {
+  background-color: #c0392b;
+}
+
+button.edit {
+  background-color: #007bff;
+  margin-right: 10px;
+}
+
+button.edit:hover {
+  background-color: #007bff;
+}
+
+.add-btn {
+  background-color: #007bff;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.add-btn:hover {
+  background-color: #007bff;
+}
+
+/* Modal Styles */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal {
+  background: white;
+  padding: 25px;
+  border-radius: 15px;
+  width: 90%;
+  max-width: 500px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.modal-header h3 {
+  margin: 0;
+  color: #2c3e50;
+  font-size: 1.5em;
+}
+
+.modal-close-btn {
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: #95a5a6;
+  cursor: pointer;
+  padding: 0;
+}
+
+.modal-close-btn:hover {
+  color: #7f8c8d;
+}
+
+.form-container {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  text-align: left;
+}
+
+.input-group label {
+  font-weight: bold;
+  color: #333;
+}
+
+.input-group input {
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.modal-submit-btn {
+  margin-top: 10px;
+  width: 100%;
+  justify-content: center;
+}

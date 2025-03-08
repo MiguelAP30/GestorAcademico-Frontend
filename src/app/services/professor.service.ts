@@ -22,5 +22,9 @@ export class ProfessorService {
   deleteProfessor(id: string): Observable<any> {
     return this.http.delete(`${this.apiUrl}/${id}`);
   }
+
+  updateProfessor(proffesor: any) {
+    return this.http.put(`${this.apiUrl}/${proffesor.identification}`, proffesor);
+  }
 }
 

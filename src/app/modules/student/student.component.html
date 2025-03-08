@@ -1,83 +1,191 @@
 <div class="container">
-  <h2>Lista de Estudiantes</h2>
+  <div class="header">
+    <h2>Lista de Estudiantes</h2>
+    <button class="add-btn" (click)="openCreateStudentModal()">
+      <i class="fas fa-plus"></i> Agregar Estudiante
+    </button>
+  </div>
 
-  <!-- BOTÓN PARA ABRIR MODAL DE CREACIÓN -->
-  <button class="add-btn" (click)="openCreateStudentModal()">Agregar Estudiante</button>
-
-  <!-- LISTADO DE ESTUDIANTES -->
+  <!-- Lista de Estudiantes -->
   <ul class="student-list">
     <li *ngFor="let student of students">
-      <div class="student-info">
-        <strong>{{ student.firstName }} {{ student.lastName }}</strong> - ID: {{ student.identification }}
-      </div>
-      <div class="button-group">
-        <button class="courses" (click)="openCoursesModal(student)">📚 Cursos</button>
-        <button class="edit" (click)="openEditModal(student)">✏️ Editar</button>
-        <button class="delete" (click)="deleteStudent(student.identification)">🗑 Eliminar</button>
+      <div class="student-card">
+        <div class="student-info">
+          <strong>{{ student.firstName }} {{ student.lastName }}</strong>
+          <div class="student-details">
+            <span>
+              <i class="fas fa-id-card"></i>
+              ID: {{ student.identification }}
+            </span>
+            <span>
+              <i class="fas fa-calendar"></i>
+              Nacimiento: {{ student.birthDate | date:'dd/MM/yyyy' }}
+            </span>
+          </div>
+        </div>
+        <div class="button-group">
+          <button class="courses" (click)="openCoursesModal(student)">
+            <i class="fas fa-book"></i> Cursos
+          </button>
+          <button class="edit" (click)="openEditModal(student)">
+            <i class="fas fa-edit"></i> Editar
+          </button>
+          <button class="delete" (click)="deleteStudent(student.identification)">
+            <i class="fas fa-trash"></i> Eliminar
+          </button>
+        </div>
       </div>
     </li>
   </ul>
-</div>
 
-<!-- MODAL PARA CREAR ESTUDIANTE -->
-<div class="modal" *ngIf="showCreateStudentModal">
-  <div class="modal-content">
-    <button class="modal-close-btn" (click)="closeCreateStudentModal()">×</button>
-    <h3>Agregar Estudiante</h3>
-    <div class="form-container">
-      <div class="input-group">
-        <input type="text" placeholder="ID" [(ngModel)]="newStudent.identification">
-        <input type="text" placeholder="Nombre" [(ngModel)]="newStudent.firstName">
+  <!-- Modal para Crear Estudiante -->
+  <div class="modal-overlay" *ngIf="showCreateStudentModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>Agregar Estudiante</h3>
+        <button class="modal-close-btn" (click)="closeCreateStudentModal()">×</button>
       </div>
-      <div class="input-group">
-        <input type="text" placeholder="Apellido" [(ngModel)]="newStudent.lastName">
-        <input type="date" [(ngModel)]="newStudent.birthDate">
-      </div>
-      <button class="add-btn" (click)="addStudent()">Agregar</button>
-    </div>
-  </div>
-</div>
-
-
-<!-- MODAL DE EDICIÓN -->
-<div class="modal" *ngIf="selectedStudentForEdit">
-  <div class="modal-content">
-    <button class="modal-close-btn" (click)="closeEditModal()">×</button>
-    <h3>Editar Estudiante</h3>
-    <div class="form-container">
-      <div class="input-group">
-        <input type="text" placeholder="Nombre" [(ngModel)]="selectedStudentForEdit.firstName">
-        <input type="text" placeholder="Apellido" [(ngModel)]="selectedStudentForEdit.lastName">
-      </div>
-      <input type="date" [(ngModel)]="selectedStudentForEdit.birthDate">
-      <button class="edit-btn" (click)="updateStudent()">Guardar Cambios</button>
-    </div>
-  </div>
-</div>
-
-
-<!-- MODAL DE CURSOS -->
-<div class="modal" *ngIf="selectedStudentForCourses">
-  <div class="modal-content">
-    <button class="modal-close-btn" (click)="closeCoursesModal()">×</button>
-    <h3>Cursos de {{ selectedStudentForCourses.firstName }} {{ selectedStudentForCourses.lastName }}</h3>
-    <ul class="course-list">
-      <li *ngFor="let enrollment of selectedStudentForCourses.enrollments">
-        <div class="course-title" (click)="toggleEvaluations(enrollment.course.id)">
-          📘 {{ enrollment.course.name }} ({{ enrollment.course.description }})
-          <span *ngIf="expandedEnrollment[enrollment.course.id]">▼</span>
-          <span *ngIf="!expandedEnrollment[enrollment.course.id]">▶</span>
+      <div class="form-container">
+        <div class="input-group">
+          <label>Identificación</label>
+          <input 
+            type="text" 
+            [(ngModel)]="newStudent.identification"
+            placeholder="Ingrese la identificación"
+            required
+          >
         </div>
-        <ul class="evaluation-list" *ngIf="expandedEnrollment[enrollment.course.id]">
-          <li *ngFor="let evaluation of enrollment.evaluations" class="evaluation-item">
-            Nota: <strong><span [ngClass]="{'approved': evaluation.grade >= 3, 'failed': evaluation.grade < 3}">
-              {{ evaluation.grade }}
-            </span> - {{ evaluation.evaluationDate }}</strong>
+        <div class="input-group">
+          <label>Nombre</label>
+          <input 
+            type="text" 
+            [(ngModel)]="newStudent.firstName"
+            placeholder="Ingrese el nombre"
+            required
+          >
+        </div>
+        <div class="input-group">
+          <label>Apellido</label>
+          <input 
+            type="text" 
+            [(ngModel)]="newStudent.lastName"
+            placeholder="Ingrese el apellido"
+            required
+          >
+        </div>
+        <div class="input-group">
+          <label>Fecha de Nacimiento</label>
+          <input 
+            type="date" 
+            [(ngModel)]="newStudent.birthDate"
+            required
+          >
+        </div>
+        <button 
+          class="modal-submit-btn" 
+          (click)="addStudent()"
+          [disabled]="!newStudent.identification || !newStudent.firstName || !newStudent.lastName || !newStudent.birthDate">
+          <i class="fas fa-save"></i> Crear Estudiante
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal para Editar Estudiante -->
+  <div class="modal-overlay" *ngIf="selectedStudentForEdit">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>Editar Estudiante</h3>
+        <button class="modal-close-btn" (click)="closeEditModal()">×</button>
+      </div>
+      <div class="form-container">
+        <div class="input-group">
+          <label>Nombre</label>
+          <input 
+            type="text" 
+            [(ngModel)]="selectedStudentForEdit.firstName"
+            placeholder="Ingrese el nombre"
+            required
+          >
+        </div>
+        <div class="input-group">
+          <label>Apellido</label>
+          <input 
+            type="text" 
+            [(ngModel)]="selectedStudentForEdit.lastName"
+            placeholder="Ingrese el apellido"
+            required
+          >
+        </div>
+        <div class="input-group">
+          <label>Fecha de Nacimiento</label>
+          <input 
+            type="date" 
+            [(ngModel)]="selectedStudentForEdit.birthDate"
+            required
+          >
+        </div>
+        <button 
+          class="modal-submit-btn" 
+          (click)="updateStudent()"
+          [disabled]="!selectedStudentForEdit.firstName || !selectedStudentForEdit.lastName || !selectedStudentForEdit.birthDate">
+          <i class="fas fa-save"></i> Guardar Cambios
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de Cursos -->
+  <div class="modal-overlay" *ngIf="selectedStudentForCourses">
+    <div class="modal courses-modal">
+      <div class="modal-header">
+        <div class="student-info-header">
+          <h3>Cursos de {{ selectedStudentForCourses.firstName }} {{ selectedStudentForCourses.lastName }}</h3>
+          <span class="student-id">ID: {{ selectedStudentForCourses.identification }}</span>
+        </div>
+        <button class="modal-close-btn" (click)="closeCoursesModal()">×</button>
+      </div>
+      <div class="courses-container">
+        <ul class="courses-list">
+          <li *ngFor="let enrollment of selectedStudentForCourses.enrollments">
+            <div class="course-item">
+              <div class="course-header" (click)="toggleEvaluations(enrollment.course.id)">
+                <div class="course-info">
+                  <i class="fas fa-book"></i>
+                  <span class="course-name">{{ enrollment.course.name }}</span>
+                  <span class="course-description">{{ enrollment.course.description }}</span>
+                </div>
+                <i class="fas" [class.fa-chevron-down]="expandedEnrollment[enrollment.course.id]" 
+                   [class.fa-chevron-right]="!expandedEnrollment[enrollment.course.id]"></i>
+              </div>
+              <div class="evaluations-list" *ngIf="expandedEnrollment[enrollment.course.id]">
+                <div class="evaluation-item" *ngFor="let evaluation of enrollment.evaluations">
+                  <div class="evaluation-info">
+                    <span class="evaluation-date">
+                      <i class="fas fa-calendar"></i>
+                      {{ evaluation.evaluationDate | date:'dd/MM/yyyy' }}
+                    </span>
+                    <span class="evaluation-grade" [ngClass]="{'approved': evaluation.grade >= 3, 'failed': evaluation.grade < 3}">
+                      {{ evaluation.grade.toFixed(1) }}
+                    </span>
+                  </div>
+                  <i class="fas" [class.fa-check-circle]="evaluation.grade >= 3" 
+                     [class.fa-times-circle]="evaluation.grade < 3"
+                     [ngClass]="{'approved': evaluation.grade >= 3, 'failed': evaluation.grade < 3}"></i>
+                </div>
+                <div class="no-evaluations" *ngIf="!enrollment.evaluations?.length">
+                  <i class="fas fa-info-circle"></i>
+                  No hay evaluaciones registradas
+                </div>
+              </div>
+            </div>
           </li>
-          
-      
+          <div class="no-courses" *ngIf="!selectedStudentForCourses.enrollments?.length">
+            <i class="fas fa-book-open"></i>
+            <span>No hay cursos matriculados</span>
+          </div>
         </ul>
-      </li>
-    </ul>
+      </div>
+    </div>
   </div>
 </div>

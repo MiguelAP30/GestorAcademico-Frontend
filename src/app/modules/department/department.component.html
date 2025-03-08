@@ -1,19 +1,142 @@
 <div class="container">
-  <h2>Departamentos</h2>
+  <div class="header">
+    <h2>Departamentos</h2>
+    <button class="add-btn" (click)="openCreateDepartmentModal()">
+      <i class="fas fa-plus"></i> Agregar Departamento
+    </button>
+  </div>
 
-  <form (submit)="addDepartment()" class="form-container">
-    <input type="text" [(ngModel)]="newDepartment.name" [ngModelOptions]="{standalone: true}" placeholder="Nombre del Departamento" required>
-    <input type="number" [(ngModel)]="newDepartment.universityId" [ngModelOptions]="{standalone: true}" placeholder="ID de la Universidad" required>
-    <button type="submit" [disabled]="!newDepartment.name.trim() || !newDepartment.universityId">Agregar</button>
-  </form>
-
-  <ul class="department-list">
+  <ul class="professor-list">
     <li *ngFor="let department of departments">
-      <div class="department-info">
-        <strong>{{ department.name }}</strong>  
-        <span>(ID Dept: {{ department.id }}, Univ: {{ department.university?.name || 'Desconocida' }})</span>
+      <div class="professor-card">
+        <div class="professor-info">
+          <div class="info-row">
+            <strong>{{ department.name }}</strong>
+            <div class="detail-item">
+              <i class="fas fa-id-card"></i>
+              ID: {{ department.id }}
+            </div>
+            <div class="detail-item">
+              <i class="fas fa-university"></i>
+              {{ getUniversityName(department.universityId) }}
+            </div>
+          </div>
+        </div>
+        <div class="button-group">
+          <button class="edit" (click)="editDepartment(department)">
+            <i class="fas fa-edit"></i> Editar
+          </button>
+          <button class="delete" (click)="deleteDepartment(department.id)">
+            <i class="fas fa-trash"></i> Eliminar
+          </button>
+        </div>
       </div>
-      <button class="delete" (click)="deleteDepartment(department.id)">🗑️ Eliminar</button>
     </li>
   </ul>
+
+  <!-- Estado vacío -->
+  <div class="no-departments" *ngIf="!departments?.length">
+    <i class="fas fa-building"></i>
+    <span>No hay departamentos registrados</span>
+  </div>
+
+  <!-- Modal para Crear Departamento -->
+  <div class="modal-overlay" *ngIf="showCreateDepartmentModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>
+          <i class="fas fa-plus-circle"></i>
+          Crear Departamento
+        </h3>
+        <button class="modal-close-btn" (click)="closeCreateDepartmentModal()">×</button>
+      </div>
+      <div class="form-container">
+        <div class="input-group">
+          <label>
+            <i class="fas fa-building"></i>
+            Nombre del Departamento
+          </label>
+          <input 
+            type="text" 
+            [(ngModel)]="newDepartment.name" 
+            placeholder="Ingrese nombre del departamento" 
+            required
+          >
+        </div>
+        <div class="input-group">
+          <label>
+            <i class="fas fa-university"></i>
+            Universidad
+          </label>
+          <select 
+            [(ngModel)]="newDepartment.universityId" 
+            required
+          >
+            <option value="" disabled selected>Seleccione una universidad</option>
+            <option *ngFor="let university of universities" [value]="university.id">
+              {{ university.name }}
+            </option>
+          </select>
+        </div>
+        <button 
+          class="modal-submit-btn" 
+          (click)="addDepartment()"
+          [disabled]="!newDepartment.name.trim() || !newDepartment.universityId"
+        >
+          <i class="fas fa-save"></i>
+          Crear Departamento
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal para Editar Departamento -->
+  <div class="modal-overlay" *ngIf="selectedDepartmentForEdit">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>
+          <i class="fas fa-edit"></i>
+          Editar Departamento
+        </h3>
+        <button class="modal-close-btn" (click)="closeEditDepartmentModal()">×</button>
+      </div>
+      <div class="form-container">
+        <div class="input-group">
+          <label>
+            <i class="fas fa-building"></i>
+            Nombre del Departamento
+          </label>
+          <input 
+            type="text" 
+            [(ngModel)]="selectedDepartmentForEdit.name" 
+            placeholder="Ingrese nombre del departamento" 
+            required
+          >
+        </div>
+        <div class="input-group">
+          <label>
+            <i class="fas fa-university"></i>
+            Universidad
+          </label>
+          <select 
+            [(ngModel)]="selectedDepartmentForEdit.universityId" 
+            required
+          >
+            <option value="" disabled>Seleccione una universidad</option>
+            <option *ngFor="let university of universities" [value]="university.id">
+              {{ university.name }}
+            </option>
+          </select>
+        </div>
+        <button 
+          class="modal-submit-btn" 
+          (click)="updateDepartment()"
+          [disabled]="!selectedDepartmentForEdit.name.trim() || !selectedDepartmentForEdit.universityId"
+        >
+          <i class="fas fa-save"></i>
+          Guardar Cambios
+        </button>
+      </div>
+    </div>
+  </div>
 </div>

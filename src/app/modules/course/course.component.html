@@ -1,78 +1,207 @@
 <div class="container">
-  <h2>Cursos</h2>
-  <button (click)="createCourse()">Agregar Curso</button>
+  <div class="header">
+    <h2>Lista de Cursos</h2>
+    <button class="add-btn" (click)="openCreateModal()" style="margin-left: 15px; width: fit-content;">
+      <i class="fas fa-plus"></i> Agregar Curso
+    </button>
+  </div>
 
-  <ul>
+  <ul class="course-list">
     <li *ngFor="let course of courses">
-      <div class="course-info">
-        <strong>{{ course.name }}</strong> - {{ course.description }}
-      </div>
-      <div class="course-actions">
-        <button (click)="openModal(course, 'prerequisites')">📖 Prerrequisitos</button>
-        <button (click)="openModal(course, 'professor')">👨‍🏫 Profesor</button>
-        <button (click)="openModal(course, 'schedule')">🕒 Horarios</button>
-        <button (click)="editCourse(course)">✏️ Editar</button>
-        <button class="delete" (click)="deleteCourse(course.id)">🗑️ Eliminar</button>
+      <div class="course-card">
+        <div class="course-info">
+          <div class="info-row">
+            <strong>{{ course.name }}</strong>
+            <span class="detail-item">
+              <i class="fas fa-book"></i>
+              {{ course.description }}
+            </span>
+          </div>
+        </div>
+        <div class="button-group">
+          <button class="courses" (click)="openModal(course, 'prerequisites')">
+            <i class="fas fa-project-diagram"></i> Prerrequisitos
+          </button>
+          <button class="courses" (click)="openModal(course, 'professor')">
+            <i class="fas fa-chalkboard-teacher"></i> Profesor
+          </button>
+          <button class="courses" (click)="openModal(course, 'schedule')">
+            <i class="fas fa-clock"></i> Horarios
+          </button>
+          <button class="edit" (click)="editCourse(course)">
+            <i class="fas fa-edit"></i> Editar
+          </button>
+          <button class="delete" (click)="deleteCourse(course.id)">
+            <i class="fas fa-trash"></i> Eliminar
+          </button>
+        </div>
       </div>
     </li>
   </ul>
-</div>
 
-<div class="container">
-  <h2>Cursos</h2>
-  <button (click)="createCourse()">Agregar Curso</button>
+  <!-- Estado vacío -->
+  <div class="no-courses" *ngIf="!courses?.length">
+    <i class="fas fa-book"></i>
+    <span>No hay cursos registrados</span>
+  </div>
 
-  <ul>
-    <li *ngFor="let course of courses">
-      <div class="course-info">
-        <strong>{{ course.name }}</strong> - {{ course.description }}
+  <!-- Modal para Crear Curso -->
+  <div class="modal-overlay" *ngIf="showCreateModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>Agregar Curso</h3>
+        <button class="modal-close-btn" (click)="closeCreateModal()">×</button>
       </div>
-      <div class="course-actions">
-        <button (click)="openModal(course, 'prerequisites')">📖 Prerrequisitos</button>
-        <button (click)="openModal(course, 'professor')">👨‍🏫 Profesor</button>
-        <button (click)="openModal(course, 'schedule')">🕒 Horarios</button>
-        <button (click)="editCourse(course)">✏️ Editar</button>
-        <button class="delete" (click)="deleteCourse(course.id)">🗑️ Eliminar</button>
+      <div class="form-container">
+        <div class="input-group">
+          <label>Nombre del Curso</label>
+          <input 
+            type="text" 
+            [(ngModel)]="newCourse.name" 
+            placeholder="Ingrese el nombre del curso" 
+            required
+          >
+        </div>
+        <div class="input-group">
+          <label>Descripción</label>
+          <textarea 
+            [(ngModel)]="newCourse.description" 
+            placeholder="Ingrese la descripción del curso" 
+            required
+          ></textarea>
+        </div>
+        <button 
+          class="add-btn modal-submit-btn" 
+          (click)="createCourse()"
+          [disabled]="!newCourse.name || !newCourse.description"
+        >
+          <i class="fas fa-plus"></i> Agregar Curso
+        </button>
       </div>
-    </li>
-  </ul>
-</div>
-
-<!-- Modal -->
-<div *ngIf="selectedCourse" class="modal-overlay">
-  <div class="modal">
-    <h3 *ngIf="modalType === 'prerequisites'">Prerrequisitos de {{ selectedCourse.name }}</h3>
-    <h3 *ngIf="modalType === 'professor'">Profesor de {{ selectedCourse.name }}</h3>
-    <h3 *ngIf="modalType === 'schedule'">Horarios de {{ selectedCourse.name }}</h3>
-
-    <!-- Prerrequisitos -->
-    <div *ngIf="modalType === 'prerequisites'">
-      <ul *ngIf="selectedCourse.prerequisites.length > 0">
-        <li *ngFor="let prereq of selectedCourse.prerequisites">
-          {{ prereq.name }} - {{ prereq.description }}
-        </li>
-      </ul>
-      <p *ngIf="selectedCourse.prerequisites.length === 0">No tiene prerrequisitos</p>
     </div>
+  </div>
 
-    <div *ngIf="modalType === 'professor'">
-      <p *ngIf="selectedCourse.professor">
-        <strong>{{ selectedCourse.professor.firstName }} {{ selectedCourse.professor.lastName }}</strong><br>
-        Departamento: {{ selectedCourse.professor.department?.name || 'No asignado' }}
-      </p>
-      <p *ngIf="!selectedCourse.professor">No tiene profesor asignado</p>
+  <!-- Modal para Editar Curso -->
+  <div class="modal-overlay" *ngIf="selectedCourse && modalType === 'edit'">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>Editar Curso</h3>
+        <button class="modal-close-btn" (click)="closeModal()">×</button>
+      </div>
+      <div class="form-container">
+        <div class="input-group">
+          <label>Nombre del Curso</label>
+          <input 
+            type="text" 
+            [(ngModel)]="selectedCourse.name" 
+            placeholder="Ingrese el nombre del curso" 
+            required
+          >
+        </div>
+        <div class="input-group">
+          <label>Descripción</label>
+          <textarea 
+            [(ngModel)]="selectedCourse.description" 
+            placeholder="Ingrese la descripción del curso" 
+            required
+          ></textarea>
+        </div>
+        <button 
+          class="edit-btn modal-submit-btn" 
+          (click)="updateCourse()"
+          [disabled]="!selectedCourse.name || !selectedCourse.description"
+        >
+          <i class="fas fa-save"></i> Guardar Cambios
+        </button>
+      </div>
     </div>
-    
-    <!-- Horarios -->
-    <div *ngIf="modalType === 'schedule'">
-      <ul *ngIf="selectedCourse.schedules.length > 0">
-        <li *ngFor="let schedule of selectedCourse.schedules">
-          {{ schedule.dayOfWeek }}: {{ schedule.startTime }} - {{ schedule.endTime }}
-        </li>
-      </ul>
-      <p *ngIf="selectedCourse.schedules.length === 0">No tiene horarios asignados</p>
-    </div>
+  </div>
 
-    <button (click)="closeModal()">Cerrar</button>
+  <!-- Modal de Información -->
+  <div class="modal-overlay" *ngIf="selectedCourse && modalType !== 'edit'">
+    <div class="modal">
+      <div class="modal-header">
+        <div class="courses-header" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+          <h4>
+            <i [class]="modalType === 'prerequisites' ? 'fas fa-project-diagram' : 
+                       modalType === 'professor' ? 'fas fa-chalkboard-teacher' : 'fas fa-clock'"></i>
+            {{ modalType === 'prerequisites' ? 'Prerrequisitos' : 
+               modalType === 'professor' ? 'Profesor' : 'Horarios' }}
+          </h4>
+          <span class="courses-count">
+            {{ modalType === 'prerequisites' ? (selectedCourse.prerequisites?.length || 0) + ' prerrequisitos' :
+               modalType === 'professor' ? '1 profesor' :
+               (selectedCourse.schedules?.length || 0) + ' horarios' }}
+          </span>
+        </div>
+        <button class="modal-close-btn" (click)="closeModal()">×</button>
+      </div>
+
+      <div class="modal-body">
+        <div class="courses-container">
+          <!-- Prerrequisitos -->
+          <div class="courses-list" *ngIf="modalType === 'prerequisites' && selectedCourse.prerequisites?.length > 0">
+            <div class="course-card" *ngFor="let prereq of selectedCourse.prerequisites">
+              <div class="course-header">
+                <i class="fas fa-book"></i>
+                <h5>{{ prereq.name }}</h5>
+              </div>
+              <p class="course-description">{{ prereq.description }}</p>
+            </div>
+          </div>
+
+          <!-- Profesor -->
+          <div class="courses-list" *ngIf="modalType === 'professor' && selectedCourse.professor">
+            <div class="course-card">
+              <div class="course-header">
+                <i class="fas fa-user-tie"></i>
+                <h5>{{ selectedCourse.professor.firstName }} {{ selectedCourse.professor.lastName }}</h5>
+              </div>
+              <div class="course-footer">
+                <span class="course-code">
+                  <i class="fas fa-id-card"></i>
+                  ID: {{ selectedCourse.professor.identification }}
+                </span>
+                <span class="course-credits">
+                  <i class="fas fa-building"></i>
+                  {{ selectedCourse.professor.department?.name || 'Sin departamento' }}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Horarios -->
+          <div class="courses-list" *ngIf="modalType === 'schedule' && selectedCourse.schedules?.length > 0">
+            <div class="course-card" *ngFor="let schedule of selectedCourse.schedules">
+              <div class="course-header">
+                <i class="fas fa-clock"></i>
+                <h5>{{ schedule.day }}</h5>
+              </div>
+              <div class="course-footer">
+                <span class="course-code">
+                  <i class="fas fa-hourglass-start"></i>
+                  Inicio: {{ schedule.startTime }}
+                </span>
+                <span class="course-credits">
+                  <i class="fas fa-hourglass-end"></i>
+                  Fin: {{ schedule.endTime }}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Estados vacíos -->
+          <div class="no-courses" *ngIf="(modalType === 'prerequisites' && !selectedCourse.prerequisites?.length) ||
+                                       (modalType === 'professor' && !selectedCourse.professor) ||
+                                       (modalType === 'schedule' && !selectedCourse.schedules?.length)">
+            <i [class]="modalType === 'prerequisites' ? 'fas fa-book-open' :
+                       modalType === 'professor' ? 'fas fa-user-slash' : 'fas fa-calendar-times'"></i>
+            <p>{{ modalType === 'prerequisites' ? 'Este curso no tiene prerrequisitos' :
+                  modalType === 'professor' ? 'Este curso no tiene profesor asignado' :
+                  'Este curso no tiene horarios asignados' }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>

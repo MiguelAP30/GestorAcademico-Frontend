@@ -1,23 +1,160 @@
 <div class="container">
-  <h2>Profesores</h2>
+  <div class="header">
+    <h2>Lista de Profesores</h2>
+    <button class="add-btn" (click)="openCreateProfessorModal()" style="margin-left: 15px; width: fit-content;">
+      <i class="fas fa-plus"></i> Agregar Profesor
+    </button>
+  </div>
 
-  <!-- Formulario para agregar profesor -->
-  <form (submit)="addProfessor()" class="form-container">
-    <input type="text" [(ngModel)]="newProfessor.identification" [ngModelOptions]="{standalone: true}" placeholder="Identificación" required>
-    <input type="text" [(ngModel)]="newProfessor.firstName" [ngModelOptions]="{standalone: true}" placeholder="Nombre" required>
-    <input type="text" [(ngModel)]="newProfessor.lastName" [ngModelOptions]="{standalone: true}" placeholder="Apellido" required>
-    <input type="number" [(ngModel)]="newProfessor.departmentId" [ngModelOptions]="{standalone: true}" placeholder="ID del Departamento">
-    <button type="submit" [disabled]="!newProfessor.identification.trim() || !newProfessor.firstName.trim() || !newProfessor.lastName.trim()">Agregar</button>
-  </form>
-
-  <!-- Lista de profesores -->
   <ul class="professor-list">
     <li *ngFor="let professor of professors">
-      <div class="professor-info">
-        <strong>{{ professor.firstName }} {{ professor.lastName }}</strong>  
-        <span>(ID: {{ professor.identification }}, Dept: {{ professor.department?.name || 'N/A' }})</span>
+      <div class="professor-card">
+        <div class="professor-info">
+          <div class="info-row">
+            <strong>{{ professor.firstName }} {{ professor.lastName }}</strong>
+            <span class="detail-item">
+              <i class="fas fa-id-card"></i>
+              {{ professor.identification }}
+            </span>
+            <span class="detail-item">
+              <i class="fas fa-building"></i>
+              {{ professor.department?.name || 'Sin departamento' }}
+            </span>
+          </div>
+        </div>
+        <div class="button-group">
+          <button class="courses" (click)="openProfessorCoursesModal(professor)">
+            <i class="fas fa-book"></i> Cursos
+          </button>
+          <button class="edit" (click)="openEditProfessorModal(professor)">
+            <i class="fas fa-edit"></i> Editar
+          </button>
+          <button class="delete" (click)="deleteProfessor(professor.identification)">
+            <i class="fas fa-trash"></i> Eliminar
+          </button>
+        </div>
       </div>
-      <button class="delete" (click)="deleteProfessor(professor.identification)">🗑️ Eliminar</button>
     </li>
   </ul>
+</div>
+
+<!-- Modal para Crear Profesor -->
+<div class="modal-overlay" *ngIf="showCreateProfessorModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>Agregar Profesor</h3>
+      <button class="modal-close-btn" (click)="closeCreateProfessorModal()">×</button>
+    </div>
+    <div class="form-container">
+      <div class="input-group">
+        <label>Identificación</label>
+        <input type="text" placeholder="Ingrese ID" [(ngModel)]="newProfessor.identification">
+      </div>
+      <div class="input-group">
+        <label>Nombre</label>
+        <input type="text" placeholder="Ingrese nombre" [(ngModel)]="newProfessor.firstName">
+      </div>
+      <div class="input-group">
+        <label>Apellido</label>
+        <input type="text" placeholder="Ingrese apellido" [(ngModel)]="newProfessor.lastName">
+      </div>
+      <div class="input-group">
+        <label>Departamento</label>
+        <select [(ngModel)]="newProfessor.departmentId" class="select-input">
+          <option value="" disabled selected>Seleccione un departamento</option>
+          <option *ngFor="let dept of departments" [value]="dept.id">
+            {{ dept.name }}
+          </option>
+        </select>
+      </div>
+      <button class="add-btn modal-submit-btn" 
+              (click)="addProfessor()"
+              [disabled]="!newProfessor.identification || !newProfessor.firstName || !newProfessor.lastName || !newProfessor.departmentId">
+        <i class="fas fa-plus"></i> Agregar Profesor
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal para Editar Profesor -->
+<div class="modal-overlay" *ngIf="selectedProfessorForEdit">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>Editar Profesor</h3>
+      <button class="modal-close-btn" (click)="closeEditProfessorModal()">×</button>
+    </div>
+    <div class="form-container">
+      <div class="input-group">
+        <label>Nombre</label>
+        <input type="text" placeholder="Ingrese nombre" [(ngModel)]="selectedProfessorForEdit.firstName">
+      </div>
+      <div class="input-group">
+        <label>Apellido</label>
+        <input type="text" placeholder="Ingrese apellido" [(ngModel)]="selectedProfessorForEdit.lastName">
+      </div>
+      <div class="input-group">
+        <label>Departamento</label>
+        <select [(ngModel)]="selectedProfessorForEdit.department.id" class="select-input">
+          <option value="" disabled>Seleccione un departamento</option>
+          <option *ngFor="let dept of departments" [value]="dept.id">
+            {{ dept.name }}
+          </option>
+        </select>
+      </div>
+      <button class="edit-btn modal-submit-btn" 
+              (click)="updateProfessor()"
+              [disabled]="!selectedProfessorForEdit.firstName || !selectedProfessorForEdit.lastName || !selectedProfessorForEdit.department?.id">
+        <i class="fas fa-save"></i> Guardar Cambios
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal de Cursos del Profesor -->
+<div class="modal-overlay" *ngIf="selectedProfessor">
+  <div class="modal">
+    <div class="modal-header">
+        <div class="courses-header" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+          <h4>
+            
+            <i class="fas fa-book"></i>
+            Cursos Impartidos
+          </h4>
+          <span class="courses-count">
+            {{ selectedProfessor.courses?.length || 0 }} cursos
+          </span>
+        </div>
+      <button class="modal-close-btn" (click)="closeProfessorCoursesModal()">×</button>
+    </div>
+    <div class="modal-body">
+      
+
+      <div class="courses-container">
+        <div class="courses-list" *ngIf="selectedProfessor.courses?.length > 0">
+          <div class="course-card" *ngFor="let course of selectedProfessor.courses">
+            <div class="course-header">
+              <i class="fas fa-graduation-cap"></i>
+              <h5>{{ course.name }}</h5>
+            </div>
+            <p class="course-description">{{ course.description }}</p>
+            <div class="course-footer">
+              <span class="course-code" *ngIf="course.code">
+                <i class="fas fa-hashtag"></i>
+                {{ course.code }}
+              </span>
+              <span class="course-credits" *ngIf="course.credits">
+                <i class="fas fa-star"></i>
+                {{ course.credits }} créditos
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div class="no-courses" *ngIf="!selectedProfessor.courses?.length">
+          <i class="fas fa-book-open"></i>
+          <p>Este profesor no tiene cursos asignados</p>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>

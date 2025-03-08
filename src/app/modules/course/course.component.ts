@@ -1,18 +1,30 @@
 import { Component, OnInit } from '@angular/core';
 import { CourseService } from '../../services/course.service';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+
+interface Course {
+  id?: number;
+  name: string;
+  description: string;
+}
 
 @Component({
   selector: 'app-course',
   templateUrl: './course.component.html',
   styleUrls: ['./course.component.css'],
-  imports: [CommonModule]
+  standalone: true,
+  imports: [CommonModule, FormsModule]
 })
-
 export class CourseComponent implements OnInit {
-  courses: any[] = [];
+  courses: Course[] = [];
   selectedCourse: any = null;
   modalType: string = '';
+  showCreateModal = false;
+  newCourse: Course = {
+    name: '',
+    description: ''
+  };
 
   constructor(private courseService: CourseService) {}
 
@@ -23,34 +35,58 @@ export class CourseComponent implements OnInit {
   loadCourses(): void {
     this.courseService.getCourses().subscribe(data => {
       this.courses = data;
-      console.log(data)
     });
+  }
+
+  openCreateModal(): void {
+    this.showCreateModal = true;
+    this.newCourse = {
+      name: '',
+      description: ''
+    };
+  }
+
+  closeCreateModal(): void {
+    this.showCreateModal = false;
   }
 
   createCourse(): void {
-    const newCourse = { name: 'Nuevo Curso', description: 'Descripción...' };
-    this.courseService.createCourse(newCourse).subscribe(() => {
-      this.loadCourses();
-    });
+    if (this.newCourse.name && this.newCourse.description) {
+      this.courseService.createCourse(this.newCourse).subscribe(() => {
+        this.loadCourses();
+        this.closeCreateModal();
+      });
+    }
   }
 
-  editCourse(course: any): void {
-    const updatedCourse = { ...course, name: 'Curso Editado' };
-    this.courseService.updateCourse(course.id, updatedCourse).subscribe(() => {
-      this.loadCourses();
-    });
+  editCourse(course: Course): void {
+    this.selectedCourse = { ...course };
+    this.modalType = 'edit';
   }
 
-  deleteCourse(id: number): void {
-    this.courseService.deleteCourse(id).subscribe(() => {
-      this.loadCourses();
-    });
+  updateCourse(): void {
+    if (this.selectedCourse.name && this.selectedCourse.description) {
+      this.courseService.updateCourse(this.selectedCourse.id, this.selectedCourse).subscribe(() => {
+        this.loadCourses();
+        this.closeModal();
+      });
+    }
   }
 
-  openModal(course: any, type: string) {
-    console.log('Curso seleccionado:', type); 
-    this.closeModal();
-    this.selectedCourse = course;
+  deleteCourse(id: number | undefined): void {
+    if (id === undefined) {
+      console.error('No se puede eliminar un curso sin ID');
+      return;
+    }
+    
+      this.courseService.deleteCourse(id).subscribe(() => {
+        this.loadCourses();
+      });
+    
+  }
+
+  openModal(course: Course, type: string) {
+    this.selectedCourse = { ...course };
     this.modalType = type;
   }
 

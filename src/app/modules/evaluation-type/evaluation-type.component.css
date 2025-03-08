@@ -1,157 +1,215 @@
 .container {
-  max-width: 800px;
+  width: 80%;
   margin: auto;
   padding: 20px;
+  font-family: Arial, sans-serif;
 }
 
-
-/* Título centrado */
-h2 {
-  flex-grow: 1;
-  text-align: center;
-  margin: 0;
-}
-
-/* Botón principal */
-.add-button {
-  padding: 10px 15px;
-  font-size: 14px;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background 0.3s ease;
-}
-
-.add-button:hover {
-  background-color: #0056b3;
-}
-
-/* Lista */
-ul {
-  list-style: none;
-  padding: 0;
-}
-
-li {
+.header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 12px;
-  border-bottom: 1px solid #ddd;
+  margin-bottom: 30px;
 }
 
-/* Contenedor de botones */
-.evaluation-actions {
+h2 {
+  color: #2c3e50;
+  margin: 0;
+  font-size: 1.5em;
+}
+
+.add-btn {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.add-btn:hover {
+  background-color: #0056b3;
+  transform: translateY(-2px);
+}
+
+.evaluation-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.evaluation-card {
+  background: white;
+  padding: 15px 20px;
+  margin: 10px 0;
+  border-radius: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.evaluation-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.evaluation-info {
+  text-align: left;
+  flex-grow: 1;
+}
+
+.evaluation-info strong {
+  display: block;
+  color: #2c3e50;
+  font-size: 1.1em;
+  margin-bottom: 4px;
+}
+
+.button-group {
   display: flex;
   gap: 10px;
 }
 
-/* Botones de acción */
-button {
-  padding: 10px 15px;
-  font-size: 14px;
-  color: white;
+.button-group button {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 8px 16px;
   border: none;
   border-radius: 4px;
   cursor: pointer;
-  transition: background 0.3s ease;
+  color: white;
+  font-weight: 600;
+  transition: all 0.3s ease;
 }
 
-.edit {
+button.edit {
   background-color: #007bff;
 }
 
-.edit:hover {
+button.edit:hover {
   background-color: #0056b3;
 }
 
-.delete {
-  background-color: #dc3545;
+button.delete {
+  background-color: #e74c3c;
 }
 
-.delete:hover {
-  background-color: #c82333;
+button.delete:hover {
+  background-color: #c0392b;
 }
 
-/* Estilos mejorados para el modal */
+/* Modal Styles */
 .modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5);
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 1000;
 }
 
-/* Centrado y mejor formato del modal */
 .modal {
   background: white;
-  padding: 20px;
-  border-radius: 8px;
-  text-align: center;
+  padding: 25px;
+  border-radius: 15px;
   width: 90%;
-  max-width: 350px;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
-  animation: fadeIn 0.3s ease-out;
+  max-width: 500px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
 }
 
-/* Formulario dentro del modal */
-.form-group {
-  display: flex;
-  flex-direction: column;
-  margin-bottom: 10px;
-}
-
-.form-group label {
-  font-weight: bold;
-  margin-bottom: 5px;
-}
-
-.form-group input {
-  padding: 8px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  font-size: 14px;
-  width: 100%;
-}
-
-/* Botones dentro del modal */
-.modal-buttons {
+.modal-header {
   display: flex;
   justify-content: space-between;
-  margin-top: 15px;
+  align-items: center;
+  margin-bottom: 20px;
 }
 
-.save {
-  background-color: #28a745;
+.modal-header h3 {
+  margin: 0;
+  color: #2c3e50;
+  font-size: 1.5em;
 }
 
-.save:hover {
-  background-color: #218838;
+.modal-close-btn {
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: #95a5a6;
+  cursor: pointer;
+  padding: 0;
 }
 
-.cancel {
-  background-color: #dc3545;
+.modal-close-btn:hover {
+  color: #7f8c8d;
 }
 
-.cancel:hover {
-  background-color: #c82333;
+.form-container {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
 }
 
-/* Animaciones */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: scale(0.9);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  text-align: left;
+}
+
+.input-group label {
+  color: #2c3e50;
+  font-weight: 600;
+}
+
+.input-group input {
+  padding: 12px;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 14px;
+  width: 100%;
+  transition: border-color 0.3s ease;
+}
+
+.input-group input:focus {
+  outline: none;
+  border-color: #3498db;
+}
+
+.modal-submit-btn {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 12px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.3s ease;
+  margin-top: 10px;
+}
+
+.modal-submit-btn:hover {
+  background-color: #0056b3;
+  transform: translateY(-2px);
+}
+
+.modal-submit-btn:disabled {
+  background-color: #95a5a6;
+  cursor: not-allowed;
+  transform: none;
 }

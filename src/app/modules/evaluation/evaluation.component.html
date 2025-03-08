@@ -1,1 +1,277 @@
-<p>evaluation works!</p>
+<div class="container">
+  <div class="header">
+    <h2>Evaluaciones</h2>
+    <button class="add-btn" (click)="openCreateEvaluationModal()">
+      <i class="fas fa-plus"></i> Agregar Evaluación
+    </button>
+  </div>
+
+  <!-- Filtros -->
+  <div class="filters-section">
+    <div class="filters-container">
+      <div class="filter-group">
+        <label>
+          <i class="fas fa-user"></i>
+          Estudiante
+        </label>
+        <select [(ngModel)]="filters.studentId" (ngModelChange)="applyFilters()">
+          <option value="">Todos los estudiantes</option>
+          <option *ngFor="let student of students" [value]="student.identification">
+            {{ student.firstName }} {{ student.lastName }}
+          </option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label>
+          <i class="fas fa-book"></i>
+          Curso
+        </label>
+        <select [(ngModel)]="filters.courseId" (ngModelChange)="applyFilters()">
+          <option value="">Todos los cursos</option>
+          <option *ngFor="let course of courses" [value]="course.id">
+            {{ course.name }}
+          </option>
+        </select>
+      </div>
+
+      <button class="clear-filters-btn" (click)="clearFilters()">
+        <i class="fas fa-times"></i> Limpiar filtros
+      </button>
+    </div>
+  </div>
+
+  <!-- Lista de Evaluaciones -->
+  <div class="evaluation-list">
+    <div class="evaluation-card" *ngFor="let evaluation of filteredEvaluations">
+      <div class="evaluation-header">
+        <div class="student-info">
+          <i class="fas fa-user"></i>
+          {{ getStudentName(evaluation.enrollment.studentId) }}
+        </div>
+        <div class="course-info">
+          <i class="fas fa-book"></i>
+          {{ getCourseName(evaluation.enrollment.courseId) }}
+        </div>
+      </div>
+      
+      <div class="evaluation-details">
+        <div class="detail-item">
+          <i class="fas fa-calendar"></i>
+          <span>{{ formatDate(evaluation.evaluationDate) }}</span>
+        </div>
+        <div class="detail-item">
+          <i class="fas fa-tasks"></i>
+          <span>{{ evaluation.evaluationType.name }}</span>
+        </div>
+        <div class="detail-item">
+          <i class="fas fa-percentage"></i>
+          <span>{{ evaluation.evaluationType.percentage }}%</span>
+        </div>
+        <div class="detail-item grade">
+          <i class="fas fa-star"></i>
+          <span>{{ evaluation.grade.toFixed(1) }}</span>
+        </div>
+      </div>
+
+      <div class="action-buttons">
+        <button class="edit-btn" (click)="editEvaluation(evaluation)">
+          <i class="fas fa-edit"></i> Editar
+        </button>
+        <button class="delete-btn" (click)="deleteEvaluation(evaluation.id)">
+          <i class="fas fa-trash"></i> Eliminar
+        </button>
+      </div>
+    </div>
+
+    <!-- Estado vacío -->
+    <div class="no-evaluations" *ngIf="!filteredEvaluations?.length">
+      <i class="fas fa-clipboard-list"></i>
+      <span>No hay evaluaciones registradas</span>
+    </div>
+  </div>
+
+  <!-- Modal para Crear Evaluación -->
+  <div class="modal-overlay" *ngIf="showCreateModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>
+          <i class="fas fa-plus-circle"></i>
+          Crear Nueva Evaluación
+        </h3>
+        <button class="modal-close-btn" (click)="closeCreateModal()">×</button>
+      </div>
+      <form (submit)="createEvaluation()" class="form-container">
+        <div class="input-group">
+          <label>
+            <i class="fas fa-user"></i>
+            Estudiante
+          </label>
+          <select [(ngModel)]="newEvaluation.studentId" [ngModelOptions]="{standalone: true}" required>
+            <option value="">Seleccione un estudiante</option>
+            <option *ngFor="let student of students" [value]="student.identification">
+              {{ student.firstName }} {{ student.lastName }}
+            </option>
+          </select>
+        </div>
+
+        <div class="input-group">
+          <label>
+            <i class="fas fa-book"></i>
+            Curso
+          </label>
+          <select 
+            [(ngModel)]="newEvaluation.courseId" 
+            [ngModelOptions]="{standalone: true}" 
+            (ngModelChange)="onCourseSelect()"
+            required>
+            <option value="">Seleccione un curso</option>
+            <option *ngFor="let course of courses" [value]="course.id">
+              {{ course.name }}
+            </option>
+          </select>
+        </div>
+
+        <div class="input-group">
+          <label>
+            <i class="fas fa-tasks"></i>
+            Tipo de Evaluación
+          </label>
+          <select [(ngModel)]="newEvaluation.evaluationTypeId" [ngModelOptions]="{standalone: true}" required>
+            <option value="">Seleccione un tipo</option>
+            <option *ngFor="let type of evaluationTypes" [value]="type.id">
+              {{ type.name }} ({{ type.percentage }}%)
+            </option>
+          </select>
+        </div>
+
+        <div class="input-group">
+          <label>
+            <i class="fas fa-star"></i>
+            Calificación
+          </label>
+          <input 
+            type="number" 
+            [(ngModel)]="newEvaluation.grade" 
+            [ngModelOptions]="{standalone: true}"
+            min="0"
+            max="5"
+            step="0.1"
+            required
+          >
+        </div>
+
+        <div class="input-group">
+          <label>
+            <i class="fas fa-calendar"></i>
+            Fecha de Evaluación
+          </label>
+          <input 
+            type="date" 
+            [(ngModel)]="newEvaluation.evaluationDate" 
+            [ngModelOptions]="{standalone: true}"
+            required
+          >
+        </div>
+
+        <button 
+          type="submit" 
+          class="modal-submit-btn" 
+          [disabled]="!newEvaluation.studentId || !newEvaluation.courseId || !newEvaluation.evaluationTypeId || !newEvaluation.grade || !newEvaluation.evaluationDate">
+          <i class="fas fa-save"></i>
+          Crear Evaluación
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal para Editar Evaluación -->
+  <div class="modal-overlay" *ngIf="selectedEvaluation">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>
+          <i class="fas fa-edit"></i>
+          Editar Evaluación
+        </h3>
+        <button class="modal-close-btn" (click)="closeEditModal()">×</button>
+      </div>
+      <form (submit)="updateEvaluation()" class="form-container">
+        <div class="input-group">
+          <label>
+            <i class="fas fa-user"></i>
+            Estudiante
+          </label>
+          <select [(ngModel)]="selectedEvaluation.studentId" [ngModelOptions]="{standalone: true}" required>
+            <option value="">Seleccione un estudiante</option>
+            <option *ngFor="let student of students" [value]="student.identification">
+              {{ student.firstName }} {{ student.lastName }}
+            </option>
+          </select>
+        </div>
+
+        <div class="input-group">
+          <label>
+            <i class="fas fa-book"></i>
+            Curso
+          </label>
+          <select [(ngModel)]="selectedEvaluation.courseId" [ngModelOptions]="{standalone: true}" required>
+            <option value="">Seleccione un curso</option>
+            <option *ngFor="let course of courses" [value]="course.id">
+              {{ course.name }}
+            </option>
+          </select>
+        </div>
+
+        <div class="input-group">
+          <label>
+            <i class="fas fa-tasks"></i>
+            Tipo de Evaluación
+          </label>
+          <select [(ngModel)]="selectedEvaluation.evaluationTypeId" [ngModelOptions]="{standalone: true}" required>
+            <option value="">Seleccione un tipo</option>
+            <option *ngFor="let type of evaluationTypes" [value]="type.id">
+              {{ type.name }} ({{ type.percentage }}%)
+            </option>
+          </select>
+        </div>
+
+        <div class="input-group">
+          <label>
+            <i class="fas fa-star"></i>
+            Calificación
+          </label>
+          <input 
+            type="number" 
+            [(ngModel)]="selectedEvaluation.grade" 
+            [ngModelOptions]="{standalone: true}"
+            min="0"
+            max="5"
+            step="0.1"
+            required
+          >
+        </div>
+
+        <div class="input-group">
+          <label>
+            <i class="fas fa-calendar"></i>
+            Fecha de Evaluación
+          </label>
+          <input 
+            type="date" 
+            [(ngModel)]="selectedEvaluation.evaluationDate" 
+            [ngModelOptions]="{standalone: true}"
+            required
+          >
+        </div>
+
+        <button 
+          type="submit" 
+          class="modal-submit-btn" 
+          [disabled]="!validateEvaluation(selectedEvaluation)">
+          <i class="fas fa-save"></i>
+          Guardar Cambios
+        </button>
+      </form>
+    </div>
+  </div>
+</div>

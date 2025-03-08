@@ -14,7 +14,7 @@ export class EvaluationTypeComponent implements OnInit {
   evaluationTypes: any[] = [];
   selectedEvaluationType: any = null;
   isEditing = false;
-  newEvaluationType = { name: '', percentage: 0 };
+  originalPercentage = 0;
 
   constructor(private evaluationTypeService: EvaluationTypeService) {}
 
@@ -28,18 +28,49 @@ export class EvaluationTypeComponent implements OnInit {
     });
   }
 
+  getRemainingPercentage(): number {
+    const totalPercentage = this.evaluationTypes.reduce((sum, type) => {
+      if (this.isEditing && type.id === this.selectedEvaluationType?.id) {
+        return sum;
+      }
+      return sum + (type.percentage || 0);
+    }, 0);
+    return 100 - totalPercentage;
+  }
+
+  validatePercentage(percentage: number): boolean {
+    if (!percentage) return false;
+    const remaining = this.getRemainingPercentage();
+    if (this.isEditing) {
+      return percentage <= (remaining + (this.selectedEvaluationType?.percentage || 0));
+    }
+    return percentage <= remaining;
+  }
+
   createEvaluationType() {
-    this.selectedEvaluationType = { name: '', percentage: 0 };
     this.isEditing = false;
+    this.originalPercentage = 0;
+    const remaining = this.getRemainingPercentage();
+    this.selectedEvaluationType = {
+      name: '',
+      percentage: 0,
+      maxPercentage: remaining
+    };
   }
 
   editEvaluationType(evaluation: any) {
-    this.selectedEvaluationType = { ...evaluation }; // Clonar para evitar mutaciones
     this.isEditing = true;
+    this.originalPercentage = evaluation.percentage;
+    this.selectedEvaluationType = { ...evaluation };
+    const remaining = this.getRemainingPercentage();
+    this.selectedEvaluationType.maxPercentage = remaining + evaluation.percentage;
   }
 
   saveEvaluationType() {
-    if (!this.selectedEvaluationType.name.trim() || this.selectedEvaluationType.percentage < 0) return;
+    if (!this.selectedEvaluationType.name.trim() || 
+        !this.validatePercentage(this.selectedEvaluationType.percentage)) {
+      return;
+    }
 
     if (this.isEditing) {
       this.evaluationTypeService.update(this.selectedEvaluationType.id, this.selectedEvaluationType)
@@ -48,12 +79,10 @@ export class EvaluationTypeComponent implements OnInit {
           this.closeModal();
         });
     } else {
-      console.log("Datos a enviar:", this.selectedEvaluationType); // Depuración
-    
       this.evaluationTypeService.create(this.selectedEvaluationType).subscribe(() => {
         this.loadEvaluationTypes();
         this.closeModal();
-      })
+      });
     }    
   }
 
@@ -64,6 +93,7 @@ export class EvaluationTypeComponent implements OnInit {
   closeModal() {
     this.selectedEvaluationType = null;
     this.isEditing = false;
+    this.originalPercentage = 0;
   }
 
   closeModalOutside(event: MouseEvent) {

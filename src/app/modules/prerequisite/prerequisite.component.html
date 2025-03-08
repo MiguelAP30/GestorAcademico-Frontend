@@ -1,1 +1,132 @@
-<p>prerequisite works!</p>
+<div class="container">
+  <div class="header">
+    <h2>Prerrequisitos</h2>
+    <button class="add-btn" (click)="openCreatePrerequisiteModal()">
+      <i class="fas fa-plus"></i> Agregar Prerrequisito
+    </button>
+  </div>
+
+  <!-- Lista de Prerrequisitos -->
+  <ul class="prerequisite-list">
+    <li *ngFor="let prerequisite of prerequisites">
+      <div class="prerequisite-card">
+        <div class="prerequisite-info">
+          <strong>{{ prerequisite.course.name }}</strong>
+          <div class="prerequisite-details">
+            <span>
+              <i class="fas fa-book"></i>
+              Prerrequisito: {{ prerequisite.prerequisite.name }}
+            </span>
+            <span>
+              <i class="fas fa-info-circle"></i>
+              Descripción: {{ prerequisite.prerequisite.description }}
+            </span>
+          </div>
+        </div>
+        <div class="button-group">
+          <button class="edit" (click)="editPrerequisite(prerequisite)">
+            <i class="fas fa-edit"></i> Editar
+          </button>
+          <button class="delete" (click)="deletePrerequisite(prerequisite.id)">
+            <i class="fas fa-trash"></i> Eliminar
+          </button>
+        </div>
+      </div>
+    </li>
+    <div class="no-prerequisites" *ngIf="!prerequisites?.length">
+      <i class="fas fa-exclamation-circle"></i>
+      <span>No hay prerrequisitos registrados</span>
+    </div>
+  </ul>
+
+  <!-- Modal para Crear Prerrequisito -->
+  <div class="modal-overlay" *ngIf="showCreateModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>Agregar Prerrequisito</h3>
+        <button class="modal-close-btn" (click)="closeCreateModal()">×</button>
+      </div>
+      <div class="form-container">
+        <div class="input-group">
+          <label>Curso Principal</label>
+          <select 
+            [(ngModel)]="newPrerequisite.courseId"
+            required
+            [class.invalid]="!newPrerequisite.courseId"
+            (change)="onCourseSelect($event)">
+            <option value="">Seleccione un curso</option>
+            <option *ngFor="let course of courses" [value]="course.id">
+              {{ course.name }} - {{ course.description }}
+            </option>
+          </select>
+        </div>
+        <div class="input-group">
+          <label>Curso Prerrequisito</label>
+          <select 
+            [(ngModel)]="newPrerequisite.prerequisiteId"
+            required
+            [class.invalid]="!newPrerequisite.prerequisiteId"
+            [disabled]="!newPrerequisite.courseId">
+            <option value="">Seleccione un prerrequisito</option>
+            <option *ngFor="let course of availablePrerequisites" [value]="course.id">
+              {{ course.name }} - {{ course.description }}
+            </option>
+          </select>
+          <span class="helper-text" *ngIf="!newPrerequisite.courseId">
+            Seleccione primero un curso principal
+          </span>
+        </div>
+        <button 
+          class="modal-submit-btn" 
+          (click)="createPrerequisite()"
+          [disabled]="!newPrerequisite.courseId || !newPrerequisite.prerequisiteId">
+          <i class="fas fa-save"></i> Crear Prerrequisito
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal para Editar Prerrequisito -->
+  <div class="modal-overlay" *ngIf="selectedPrerequisite">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>Editar Prerrequisito</h3>
+        <button class="modal-close-btn" (click)="closeEditModal()">×</button>
+      </div>
+      <div class="form-container">
+        <div class="input-group">
+          <label>Curso Principal</label>
+          <select 
+            [(ngModel)]="selectedPrerequisite.courseId"
+            required
+            [class.invalid]="!selectedPrerequisite.courseId"
+            (change)="onCourseSelect($event)">
+            <option value="">Seleccione un curso</option>
+            <option *ngFor="let course of courses" [value]="course.id">
+              {{ course.name }} - {{ course.description }}
+            </option>
+          </select>
+        </div>
+        <div class="input-group">
+          <label>Curso Prerrequisito</label>
+          <select 
+            [(ngModel)]="selectedPrerequisite.prerequisiteId"
+            required
+            [class.invalid]="!selectedPrerequisite.prerequisiteId"
+            [disabled]="!selectedPrerequisite.courseId">
+            <option value="">Seleccione un prerrequisito</option>
+            <option *ngFor="let course of availablePrerequisites" [value]="course.id">
+              {{ course.name }} - {{ course.description }}
+            </option>
+          </select>
+        </div>
+        <button 
+          class="modal-submit-btn" 
+          (click)="updatePrerequisite()"
+          [disabled]="!selectedPrerequisite.courseId || !selectedPrerequisite.prerequisiteId">
+          <i class="fas fa-save"></i> Guardar Cambios
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
