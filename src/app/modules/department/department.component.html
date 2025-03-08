@@ -1,25 +1,25 @@
 <div class="container">
   <div class="header">
-    <h2>Departamentos</h2>
-    <button class="add-btn" (click)="openCreateDepartmentModal()">
+    <h2>Lista de Departamentos</h2>
+    <button class="add-btn" (click)="openCreateDepartmentModal()" style="margin-left: 15px; width: fit-content;">
       <i class="fas fa-plus"></i> Agregar Departamento
     </button>
   </div>
 
-  <ul class="professor-list">
+  <ul class="department-list">
     <li *ngFor="let department of departments">
-      <div class="professor-card">
-        <div class="professor-info">
+      <div class="department-card">
+        <div class="department-info">
           <div class="info-row">
             <strong>{{ department.name }}</strong>
-            <div class="detail-item">
+            <span class="detail-item">
               <i class="fas fa-id-card"></i>
               ID: {{ department.id }}
-            </div>
-            <div class="detail-item">
+            </span>
+            <span class="detail-item">
               <i class="fas fa-university"></i>
-              {{ getUniversityName(department.universityId) }}
-            </div>
+              {{ department.university?.name || 'Sin universidad' }}
+            </span>
           </div>
         </div>
         <div class="button-group">
@@ -44,10 +44,7 @@
   <div class="modal-overlay" *ngIf="showCreateDepartmentModal">
     <div class="modal">
       <div class="modal-header">
-        <h3>
-          <i class="fas fa-plus-circle"></i>
-          Crear Departamento
-        </h3>
+        <h3>Agregar Departamento</h3>
         <button class="modal-close-btn" (click)="closeCreateDepartmentModal()">×</button>
       </div>
       <div class="form-container">
@@ -79,12 +76,11 @@
           </select>
         </div>
         <button 
-          class="modal-submit-btn" 
+          class="add-btn modal-submit-btn" 
           (click)="addDepartment()"
           [disabled]="!newDepartment.name.trim() || !newDepartment.universityId"
         >
-          <i class="fas fa-save"></i>
-          Crear Departamento
+          <i class="fas fa-plus"></i> Agregar Departamento
         </button>
       </div>
     </div>
@@ -94,10 +90,7 @@
   <div class="modal-overlay" *ngIf="selectedDepartmentForEdit">
     <div class="modal">
       <div class="modal-header">
-        <h3>
-          <i class="fas fa-edit"></i>
-          Editar Departamento
-        </h3>
+        <h3>Editar Departamento</h3>
         <button class="modal-close-btn" (click)="closeEditDepartmentModal()">×</button>
       </div>
       <div class="form-container">
@@ -129,12 +122,11 @@
           </select>
         </div>
         <button 
-          class="modal-submit-btn" 
+          class="edit-btn modal-submit-btn" 
           (click)="updateDepartment()"
           [disabled]="!selectedDepartmentForEdit.name.trim() || !selectedDepartmentForEdit.universityId"
         >
-          <i class="fas fa-save"></i>
-          Guardar Cambios
+          <i class="fas fa-save"></i> Guardar Cambios
         </button>
       </div>
     </div>

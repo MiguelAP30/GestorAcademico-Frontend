@@ -1,14 +1,15 @@
-export interface Department {
-  id: number;
-  name: string;
-  universityId: number;
-  professors?: Professor[];
-  courses?: Course[];
-}
-
 export interface University {
   id: number;
   name: string;
+}
+
+export interface Department {
+  id: number;
+  name: string;
+  university?: University;
+  universityId: number;
+  professors?: Professor[];
+  courses?: Course[];
 }
 
 export interface Professor {

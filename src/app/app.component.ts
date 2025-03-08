@@ -69,7 +69,7 @@ import { NgIf } from '@angular/common';
       left: -280px;
       height: 100vh;
       width: 280px;
-      background: #2c3e50;
+      background: #000000;
       transition: left 0.3s ease;
       z-index: 1000;
       padding: 20px 0;
@@ -94,18 +94,18 @@ import { NgIf } from '@angular/common';
       margin: 50px 0 0 0;
     }
     .sidebar ul li {
-      margin: 8px 0;
+      margin: 0;
     }
     .sidebar ul li a {
       display: flex;
       align-items: center;
-      padding: 12px 25px;
+      padding: 6px 25px;
       color: #fff;
       text-decoration: none;
       transition: all 0.3s ease;
     }
     .sidebar ul li a:hover {
-      background: #34495e;
+      background: #333333;
       padding-left: 30px;
     }
     .sidebar ul li a.active {
@@ -131,8 +131,9 @@ import { NgIf } from '@angular/common';
       display: flex;
       align-items: center;
       padding: 1rem;
-      background: #2c3e50;
+      background: #000000;
       color: white;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
     .menu-toggle {
       background: none;
