@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { DepartmentService } from '../../services/department.service';
 import { UniversityService } from '../../services/university.service';
 import { Department, University } from '../../models/department.model';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-department',
@@ -72,8 +73,22 @@ export class DepartmentComponent implements OnInit {
         () => {
           this.loadDepartments();
           this.closeCreateDepartmentModal();
+          Swal.fire({
+            icon: 'success',
+            title: '¡Éxito!',
+            text: 'Departamento creado correctamente',
+            showConfirmButton: false,
+            timer: 1500
+          });
         },
-        error => console.error('Error creating department:', error)
+        error => {
+          console.error('Error creating department:', error);
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'No se pudo crear el departamento',
+          });
+        }
       );
     }
   }
@@ -94,18 +109,59 @@ export class DepartmentComponent implements OnInit {
         () => {
           this.loadDepartments();
           this.closeEditDepartmentModal();
+          Swal.fire({
+            icon: 'success',
+            title: '¡Éxito!',
+            text: 'Departamento actualizado correctamente',
+            showConfirmButton: false,
+            timer: 1500
+          });
         },
-        error => console.error('Error updating department:', error)
+        error => {
+          console.error('Error updating department:', error);
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'No se pudo actualizar el departamento',
+          });
+        }
       );
     }
   }
 
   deleteDepartment(id: number): void {
-    if (confirm('¿Está seguro de que desea eliminar este departamento?')) {
-      this.departmentService.deleteDepartment(id).subscribe(
-        () => this.loadDepartments(),
-        error => console.error('Error deleting department:', error)
-      );
-    }
+    Swal.fire({
+      title: '¿Estás seguro?',
+      text: "Esta acción no se puede deshacer",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Sí, eliminar',
+      cancelButtonText: 'Cancelar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.departmentService.deleteDepartment(id).subscribe(
+          () => {
+            this.loadDepartments();
+            Swal.fire({
+              icon: 'success',
+              title: '¡Eliminado!',
+              text: 'Departamento eliminado correctamente',
+              showConfirmButton: false,
+              timer: 1500
+            });
+          },
+          error => {
+            console.error('Error deleting department:', error);
+            Swal.fire({
+              icon: 'error',
+              title: 'Error',
+              text: 'No se pudo eliminar el departamento',
+            });
+          }
+        );
+      }
+    });
   }
 }

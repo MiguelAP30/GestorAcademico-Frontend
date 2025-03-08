@@ -6,6 +6,7 @@ import { StudentService } from '../../services/student.service';
 import { CourseService } from '../../services/course.service';
 import { EvaluationTypeService } from '../../services/evaluation-type.service';
 import { EnrollmentService } from '../../services/enrollment.service';
+import Swal from 'sweetalert2';
 
 interface EvaluationType {
   id: number;
@@ -120,8 +121,6 @@ export class EvaluationComponent implements OnInit {
       const enrollment = this.enrollments.find(e => 
         e.studentId === this.newEvaluation.studentId && 
         e.courseId === parseInt(this.newEvaluation.courseId)
-
-        
       );
       
       if (enrollment) {
@@ -174,25 +173,30 @@ export class EvaluationComponent implements OnInit {
     };
   }
 
-  createEvaluation() {
-    if (!this.newEvaluation.enrollmentId || 
-        !this.newEvaluation.evaluationTypeId || 
-        !this.newEvaluation.grade || 
-        !this.newEvaluation.evaluationDate) {
-      return;
+  createEvaluation(): void {
+    if (this.validateEvaluation(this.newEvaluation)) {
+      this.evaluationService.createEvaluation(this.newEvaluation).subscribe(
+        () => {
+          this.loadEvaluations();
+          this.closeCreateModal();
+          Swal.fire({
+            icon: 'success',
+            title: '¡Éxito!',
+            text: 'Evaluación creada correctamente',
+            showConfirmButton: false,
+            timer: 1500
+          });
+        },
+        error => {
+          console.error('Error creating evaluation:', error);
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'No se pudo crear la evaluación',
+          });
+        }
+      );
     }
-
-    const evaluationToCreate = {
-      enrollmentId: this.newEvaluation.enrollmentId,
-      evaluationTypeId: this.newEvaluation.evaluationTypeId,
-      grade: this.newEvaluation.grade,
-      evaluationDate: this.newEvaluation.evaluationDate
-    };
-
-    this.evaluationService.createEvaluation(evaluationToCreate).subscribe(() => {
-      this.loadEvaluations();
-      this.closeCreateModal();
-    });
   }
 
   editEvaluation(evaluation: Evaluation) {
@@ -211,48 +215,78 @@ export class EvaluationComponent implements OnInit {
     this.selectedEvaluation = null;
   }
 
-  updateEvaluation() {
-    if (!this.validateEvaluation(this.selectedEvaluation)) {
-      return;
+  updateEvaluation(): void {
+    if (this.validateEvaluation(this.selectedEvaluation)) {
+      this.evaluationService.updateEvaluation(this.selectedEvaluation.id, this.selectedEvaluation).subscribe(
+        () => {
+          this.loadEvaluations();
+          this.closeEditModal();
+          Swal.fire({
+            icon: 'success',
+            title: '¡Éxito!',
+            text: 'Evaluación actualizada correctamente',
+            showConfirmButton: false,
+            timer: 1500
+          });
+        },
+        error => {
+          console.error('Error updating evaluation:', error);
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'No se pudo actualizar la evaluación',
+          });
+        }
+      );
     }
-
-    // Obtener el enrollmentId basado en studentId y courseId
-    this.selectedEvaluation.enrollmentId = this.getEnrollmentId(
-      this.selectedEvaluation.studentId,
-      this.selectedEvaluation.courseId
-    );
-
-    const evaluationData = {
-      evaluationDate: this.selectedEvaluation.evaluationDate,
-      grade: this.selectedEvaluation.grade,
-      enrollmentId: parseInt(this.selectedEvaluation.enrollmentId),
-      evaluationTypeId: parseInt(this.selectedEvaluation.evaluationTypeId)
-    };
-
-    this.evaluationService.updateEvaluation(
-      this.selectedEvaluation.id,
-      evaluationData
-    ).subscribe(() => {
-      this.loadEvaluations();
-      this.closeEditModal();
-    });
   }
 
-  deleteEvaluation(id: number) {
-    this.evaluationService.deleteEvaluation(id).subscribe(() => {
-      this.loadEvaluations();
+  deleteEvaluation(id: number): void {
+    Swal.fire({
+      title: '¿Estás seguro?',
+      text: "Esta acción no se puede deshacer",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Sí, eliminar',
+      cancelButtonText: 'Cancelar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.evaluationService.deleteEvaluation(id).subscribe(
+          () => {
+            this.loadEvaluations();
+            Swal.fire({
+              icon: 'success',
+              title: '¡Eliminado!',
+              text: 'Evaluación eliminada correctamente',
+              showConfirmButton: false,
+              timer: 1500
+            });
+          },
+          error => {
+            console.error('Error deleting evaluation:', error);
+            Swal.fire({
+              icon: 'error',
+              title: 'Error',
+              text: 'No se pudo eliminar la evaluación',
+            });
+          }
+        );
+      }
     });
   }
 
   validateEvaluation(evaluation: any): boolean {
-    const enrollmentId = this.getEnrollmentId(evaluation.studentId, evaluation.courseId);
-    return (
-      evaluation.evaluationDate &&
-      evaluation.grade >= 0 &&
-      evaluation.grade <= 5 &&
-      enrollmentId &&
-      evaluation.evaluationTypeId
-    );
+    if (!evaluation.enrollmentId || !evaluation.evaluationTypeId || !evaluation.grade || evaluation.grade < 0 || evaluation.grade > 5) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Por favor, complete todos los campos correctamente. La nota debe estar entre 0 y 5.',
+      });
+      return false;
+    }
+    return true;
   }
 
   formatDate(date: string): string {

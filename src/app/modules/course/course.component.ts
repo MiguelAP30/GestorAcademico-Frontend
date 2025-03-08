@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CourseService } from '../../services/course.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import Swal from 'sweetalert2';
 
 interface Course {
   id?: number;
@@ -52,10 +53,27 @@ export class CourseComponent implements OnInit {
 
   createCourse(): void {
     if (this.newCourse.name && this.newCourse.description) {
-      this.courseService.createCourse(this.newCourse).subscribe(() => {
-        this.loadCourses();
-        this.closeCreateModal();
-      });
+      this.courseService.createCourse(this.newCourse).subscribe(
+        () => {
+          this.loadCourses();
+          this.closeCreateModal();
+          Swal.fire({
+            icon: 'success',
+            title: '¡Éxito!',
+            text: 'Curso creado correctamente',
+            showConfirmButton: false,
+            timer: 1500
+          });
+        },
+        error => {
+          console.error('Error creating course:', error);
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'No se pudo crear el curso',
+          });
+        }
+      );
     }
   }
 
@@ -66,23 +84,73 @@ export class CourseComponent implements OnInit {
 
   updateCourse(): void {
     if (this.selectedCourse.name && this.selectedCourse.description) {
-      this.courseService.updateCourse(this.selectedCourse.id, this.selectedCourse).subscribe(() => {
-        this.loadCourses();
-        this.closeModal();
-      });
+      this.courseService.updateCourse(this.selectedCourse.id, this.selectedCourse).subscribe(
+        () => {
+          this.loadCourses();
+          this.closeModal();
+          Swal.fire({
+            icon: 'success',
+            title: '¡Éxito!',
+            text: 'Curso actualizado correctamente',
+            showConfirmButton: false,
+            timer: 1500
+          });
+        },
+        error => {
+          console.error('Error updating course:', error);
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'No se pudo actualizar el curso',
+          });
+        }
+      );
     }
   }
 
   deleteCourse(id: number | undefined): void {
     if (id === undefined) {
-      console.error('No se puede eliminar un curso sin ID');
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'No se puede eliminar un curso sin ID',
+      });
       return;
     }
-    
-      this.courseService.deleteCourse(id).subscribe(() => {
-        this.loadCourses();
-      });
-    
+
+    Swal.fire({
+      title: '¿Estás seguro?',
+      text: "Esta acción no se puede deshacer",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Sí, eliminar',
+      cancelButtonText: 'Cancelar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.courseService.deleteCourse(id).subscribe(
+          () => {
+            this.loadCourses();
+            Swal.fire({
+              icon: 'success',
+              title: '¡Eliminado!',
+              text: 'Curso eliminado correctamente',
+              showConfirmButton: false,
+              timer: 1500
+            });
+          },
+          error => {
+            console.error('Error deleting course:', error);
+            Swal.fire({
+              icon: 'error',
+              title: 'Error',
+              text: 'No se pudo eliminar el curso',
+            });
+          }
+        );
+      }
+    });
   }
 
   openModal(course: Course, type: string) {

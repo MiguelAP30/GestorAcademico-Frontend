@@ -2,6 +2,7 @@ import { Component, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { UniversityService } from '../../services/university.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-university',
@@ -58,7 +59,21 @@ export class UniversityComponent {
     this.universityService.createUniversity(this.newUniversity).subscribe(() => {
       this.closeCreateUniversityModal();
       this.loadUniversities();
-    }, error => console.error('Error al agregar universidad', error));
+      Swal.fire({
+        icon: 'success',
+        title: '¡Éxito!',
+        text: 'Universidad creada correctamente',
+        showConfirmButton: false,
+        timer: 1500
+      });
+    }, error => {
+      console.error('Error al agregar universidad', error);
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'No se pudo crear la universidad',
+      });
+    });
   }
 
   updateUniversity() {
@@ -67,13 +82,65 @@ export class UniversityComponent {
     this.universityService.updateUniversity(this.selectedUniversityForEdit.id, this.selectedUniversityForEdit).subscribe(() => {
       this.closeEditUniversityModal();
       this.loadUniversities();
-    }, error => console.error('Error al actualizar universidad', error));
+      Swal.fire({
+        icon: 'success',
+        title: '¡Éxito!',
+        text: 'Universidad actualizada correctamente',
+        showConfirmButton: false,
+        timer: 1500
+      });
+    }, error => {
+      console.error('Error al actualizar universidad', error);
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'No se pudo actualizar la universidad',
+      });
+    });
   }
   
   deleteUniversity(id: number) {
-      this.universityService.deleteUniversity(id).subscribe(() => {
-        this.loadUniversities();
-      }, error => console.error('Error al eliminar universidad', error));
-    
+    Swal.fire({
+      title: '¿Estás seguro?',
+      text: "Esta acción no se puede deshacer",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Sí, eliminar',
+      cancelButtonText: 'Cancelar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.universityService.deleteUniversity(id).subscribe(() => {
+          this.loadUniversities();
+          Swal.fire({
+            icon: 'success',
+            title: '¡Eliminado!',
+            text: 'Universidad eliminada correctamente',
+            showConfirmButton: false,
+            timer: 1500
+          });
+        }, error => {
+          console.error('Error al eliminar universidad', error);
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'No se pudo eliminar la universidad',
+          });
+        });
+      }
+    });
+  }
+
+  private validateUniversity(university: any): boolean {
+    if (!university.name?.trim()) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Por favor, ingrese el nombre de la universidad',
+      });
+      return false;
+    }
+    return true;
   }
 }

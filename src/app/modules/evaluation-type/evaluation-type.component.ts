@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { EvaluationTypeService } from '../../services/evaluation-type.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-evaluation-type',
@@ -77,17 +78,77 @@ export class EvaluationTypeComponent implements OnInit {
         .subscribe(() => {
           this.loadEvaluationTypes();
           this.closeModal();
+          Swal.fire({
+            icon: 'success',
+            title: '¡Éxito!',
+            text: 'Tipo de evaluación actualizado correctamente',
+            showConfirmButton: false,
+            timer: 1500
+          });
+        },
+        error => {
+          console.error('Error updating evaluation type:', error);
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'No se pudo actualizar el tipo de evaluación',
+          });
         });
     } else {
       this.evaluationTypeService.create(this.selectedEvaluationType).subscribe(() => {
         this.loadEvaluationTypes();
         this.closeModal();
+        Swal.fire({
+          icon: 'success',
+          title: '¡Éxito!',
+          text: 'Tipo de evaluación creado correctamente',
+          showConfirmButton: false,
+          timer: 1500
+        });
+      },
+      error => {
+        console.error('Error creating evaluation type:', error);
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'No se pudo crear el tipo de evaluación',
+        });
       });
     }    
   }
 
   deleteEvaluationType(id: number) {
-    this.evaluationTypeService.delete(id).subscribe(() => this.loadEvaluationTypes());
+    Swal.fire({
+      title: '¿Estás seguro?',
+      text: "Esta acción no se puede deshacer",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Sí, eliminar',
+      cancelButtonText: 'Cancelar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.evaluationTypeService.delete(id).subscribe(() => {
+          this.loadEvaluationTypes();
+          Swal.fire({
+            icon: 'success',
+            title: '¡Eliminado!',
+            text: 'Tipo de evaluación eliminado correctamente',
+            showConfirmButton: false,
+            timer: 1500
+          });
+        },
+        error => {
+          console.error('Error deleting evaluation type:', error);
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'No se pudo eliminar el tipo de evaluación',
+          });
+        });
+      }
+    });
   }
 
   closeModal() {

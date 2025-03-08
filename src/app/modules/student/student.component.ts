@@ -1,7 +1,8 @@
-import { Component } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import { StudentService } from "../../services/student.service";
 import { FormsModule } from "@angular/forms";
 import { CommonModule, NgIf, NgFor } from "@angular/common";
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-student',
@@ -10,7 +11,7 @@ import { CommonModule, NgIf, NgFor } from "@angular/common";
   templateUrl: './student.component.html',
   styleUrls: ['./student.component.css']
 })
-export class StudentComponent {
+export class StudentComponent implements OnInit {
   students: any[] = [];
   selectedStudentForEdit: any = null;
   selectedStudentForCourses: any = null;
@@ -38,22 +39,65 @@ export class StudentComponent {
     this.showCreateStudentModal = false;
   }
 
-  addStudent() {
-    if (!this.newStudent.identification.trim() || 
-        !this.newStudent.firstName.trim() || 
-        !this.newStudent.lastName.trim() || 
-        !this.newStudent.birthDate) return;
-
-    this.studentService.createStudent(this.newStudent).subscribe((student) => {
-      this.students.push(student);
-      this.newStudent = { identification: '', firstName: '', lastName: '', birthDate: '' };
-      this.closeCreateStudentModal();
-    });
+  addStudent(): void {
+    if (this.validateStudent(this.newStudent)) {
+      this.studentService.createStudent(this.newStudent).subscribe(
+        () => {
+          this.loadStudents();
+          this.closeCreateStudentModal();
+          Swal.fire({
+            icon: 'success',
+            title: '¡Éxito!',
+            text: 'Estudiante agregado correctamente',
+            showConfirmButton: false,
+            timer: 1500
+          });
+        },
+        error => {
+          console.error('Error creating student:', error);
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'No se pudo agregar el estudiante',
+          });
+        }
+      );
+    }
   }
 
-  deleteStudent(id: string) {
-    this.studentService.deleteStudent(id).subscribe(() => {
-      this.students = this.students.filter(s => s.identification !== id);
+  deleteStudent(identification: string): void {
+    Swal.fire({
+      title: '¿Estás seguro?',
+      text: "Esta acción no se puede deshacer",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Sí, eliminar',
+      cancelButtonText: 'Cancelar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.studentService.deleteStudent(identification).subscribe(
+          () => {
+            this.loadStudents();
+            Swal.fire({
+              icon: 'success',
+              title: '¡Eliminado!',
+              text: 'Estudiante eliminado correctamente',
+              showConfirmButton: false,
+              timer: 1500
+            });
+          },
+          error => {
+            console.error('Error deleting student:', error);
+            Swal.fire({
+              icon: 'error',
+              title: 'Error',
+              text: 'No se pudo eliminar el estudiante',
+            });
+          }
+        );
+      }
     });
   }
 
@@ -62,19 +106,30 @@ export class StudentComponent {
     this.selectedStudentForCourses = null;
   }
 
-  updateStudent() {
-    if (!this.selectedStudentForEdit) return;
-
-    const updatedStudent = { ...this.selectedStudentForEdit };
-    delete updatedStudent.enrollments;
-
-    this.studentService.updateStudent(updatedStudent).subscribe((student:any) => {
-      const index = this.students.findIndex(s => s.identification === student.identification);
-      if (index !== -1) {
-        this.students[index] = student;
-      }
-      this.closeEditModal();
-    });
+  updateStudent(): void {
+    if (this.validateStudent(this.selectedStudentForEdit)) {
+      this.studentService.updateStudent(this.selectedStudentForEdit).subscribe(
+        () => {
+          this.loadStudents();
+          this.closeEditModal();
+          Swal.fire({
+            icon: 'success',
+            title: '¡Éxito!',
+            text: 'Estudiante actualizado correctamente',
+            showConfirmButton: false,
+            timer: 1500
+          });
+        },
+        error => {
+          console.error('Error updating student:', error);
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'No se pudo actualizar el estudiante',
+          });
+        }
+      );
+    }
   }
 
   closeEditModal() {
@@ -92,5 +147,17 @@ export class StudentComponent {
 
   toggleEvaluations(courseId: number) {
     this.expandedEnrollment[courseId] = !this.expandedEnrollment[courseId];
+  }
+
+  private validateStudent(student: any): boolean {
+    if (!student.identification?.trim() || !student.firstName?.trim() || !student.lastName?.trim()) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Por favor, complete todos los campos del estudiante',
+      });
+      return false;
+    }
+    return true;
   }
 }

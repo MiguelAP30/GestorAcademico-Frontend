@@ -1,9 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { EnrollmentService } from '../../services/enrollment.service';
 import { StudentService } from '../../services/student.service';
 import { CourseService } from '../../services/course.service';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-enrollment',
@@ -12,7 +13,7 @@ import { CommonModule } from '@angular/common';
   templateUrl: './enrollment.component.html',
   styleUrl: './enrollment.component.css'
 })
-export class EnrollmentComponent {
+export class EnrollmentComponent implements OnInit {
   enrollments: any[] = [];
   students: any[] = [];
   courses: any[] = [];
@@ -74,27 +75,91 @@ export class EnrollmentComponent {
     this.selectedEnrollmentForEdit = null;
   }
 
-  addEnrollment() {
-    if (!this.newEnrollment.studentId || !this.newEnrollment.courseId) return;
-  
-    this.enrollmentService.createEnrollment(this.newEnrollment).subscribe(() => {
-      this.closeCreateEnrollmentModal();
-      this.loadEnrollments();
-    });
+  createEnrollment() {
+    if (this.validateEnrollment(this.newEnrollment)) {
+      this.enrollmentService.createEnrollment(this.newEnrollment).subscribe(
+        () => {
+          this.loadEnrollments();
+          this.closeCreateEnrollmentModal();
+          Swal.fire({
+            icon: 'success',
+            title: '¡Éxito!',
+            text: 'Matrícula creada correctamente',
+            showConfirmButton: false,
+            timer: 1500
+          });
+        },
+        error => {
+          console.error('Error creating enrollment:', error);
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'No se pudo crear la matrícula',
+          });
+        }
+      );
+    }
   }
 
   updateEnrollment() {
-    if (!this.selectedEnrollmentForEdit) return;
-    
-    this.enrollmentService.updateEnrollment(this.selectedEnrollmentForEdit.id, this.selectedEnrollmentForEdit).subscribe(() => {
-      this.closeEditEnrollmentModal();
-      this.loadEnrollments();
-    });
+    if (this.validateEnrollment(this.selectedEnrollmentForEdit)) {
+      this.enrollmentService.updateEnrollment(this.selectedEnrollmentForEdit.id, this.selectedEnrollmentForEdit).subscribe(
+        () => {
+          this.closeEditEnrollmentModal();
+          this.loadEnrollments();
+          Swal.fire({
+            icon: 'success',
+            title: '¡Éxito!',
+            text: 'Matrícula actualizada correctamente',
+            showConfirmButton: false,
+            timer: 1500
+          });
+        },
+        error => {
+          console.error('Error updating enrollment:', error);
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'No se pudo actualizar la matrícula',
+          });
+        }
+      );
+    }
   }
 
   deleteEnrollment(id: string) {
-    this.enrollmentService.deleteEnrollment(id).subscribe(() => {
-      this.loadEnrollments();
+    Swal.fire({
+      title: '¿Estás seguro?',
+      text: "Esta acción no se puede deshacer",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Sí, eliminar',
+      cancelButtonText: 'Cancelar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.enrollmentService.deleteEnrollment(id).subscribe(
+          () => {
+            this.loadEnrollments();
+            Swal.fire({
+              icon: 'success',
+              title: '¡Eliminado!',
+              text: 'Matrícula eliminada correctamente',
+              showConfirmButton: false,
+              timer: 1500
+            });
+          },
+          error => {
+            console.error('Error deleting enrollment:', error);
+            Swal.fire({
+              icon: 'error',
+              title: 'Error',
+              text: 'No se pudo eliminar la matrícula',
+            });
+          }
+        );
+      }
     });
   }
 
@@ -110,5 +175,17 @@ export class EnrollmentComponent {
     if (!evaluations || evaluations.length === 0) return 0;
     const sum = evaluations.reduce((acc, evaluation) => acc + evaluation.grade, 0);
     return sum / evaluations.length;
+  }
+
+  private validateEnrollment(enrollment: any): boolean {
+    if (!enrollment.studentId || !enrollment.courseId || !enrollment.enrollmentDate) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Por favor, complete todos los campos de la matrícula',
+      });
+      return false;
+    }
+    return true;
   }
 }

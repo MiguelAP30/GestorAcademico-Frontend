@@ -40,7 +40,7 @@
         <h3>Crear Nueva Matrícula</h3>
         <button class="modal-close-btn" (click)="closeCreateEnrollmentModal()">×</button>
       </div>
-      <form (submit)="addEnrollment()" class="form-container">
+      <form (submit)="createEnrollment()" class="form-container">
         <div class="input-group">
           <label>Estudiante</label>
           <select [(ngModel)]="newEnrollment.studentId" [ngModelOptions]="{standalone: true}" required>
