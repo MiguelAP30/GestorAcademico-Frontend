@@ -47,6 +47,11 @@ import { NgIf } from '@angular/common';
         </a>
       </li>
       <li>
+        <a routerLink="/schedules" (click)="closeMenu()" routerLinkActive="active">
+          <span class="icon">📅</span><span class="text">Horarios</span>
+        </a>
+      </li>
+      <li>
         <a routerLink="/evaluations" (click)="closeMenu()" routerLinkActive="active">
           <span class="icon">📊</span><span class="text">Evaluaciones</span>
         </a>
@@ -99,20 +104,20 @@ import { NgIf } from '@angular/common';
     .sidebar ul li a {
       display: flex;
       align-items: center;
-      padding: 6px 25px;
+      padding: 4px 15px; /* Reducido el padding horizontal de 25px a 15px */
       color: #fff;
       text-decoration: none;
       transition: all 0.3s ease;
     }
     .sidebar ul li a:hover {
       background: #333333;
-      padding-left: 30px;
+      padding-left: 20px; /* Reducido de 30px a 20px para mantener la proporción */
     }
     .sidebar ul li a.active {
       background: #3498db;
     }
     .icon {
-      margin-right: 15px;
+      margin-right: 10px; /* Reducido de 15px a 10px */
       font-size: 20px;
     }
     .text {
