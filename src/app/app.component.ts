@@ -52,6 +52,11 @@ import { NgIf } from '@angular/common';
         </a>
       </li>
       <li>
+        <a routerLink="/evaluation-type" (click)="closeMenu()" routerLinkActive="active">
+          <span class="icon">📋</span><span class="text">Tipos de evaluaciones</span>
+        </a>
+      </li>
+      <li>
         <a routerLink="/evaluations" (click)="closeMenu()" routerLinkActive="active">
           <span class="icon">📊</span><span class="text">Evaluaciones</span>
         </a>

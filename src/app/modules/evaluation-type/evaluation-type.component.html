@@ -11,12 +11,6 @@
       <div class="evaluation-card">
         <div class="evaluation-info">
           <strong>{{ evaluation.name }}</strong>
-          <div class="evaluation-details">
-            <span class="percentage">
-              <i class="fas fa-percentage"></i>
-              Porcentaje: {{ evaluation.percentage }}%
-            </span>
-          </div>
         </div>
         <div class="button-group">
           <button class="edit" (click)="editEvaluationType(evaluation)">
@@ -49,38 +43,10 @@
           />
         </div>
 
-        <div class="input-group">
-          <div class="percentage-header">
-            <label for="percentage">Porcentaje</label>
-            <span class="available-percentage" [class.warning]="getRemainingPercentage() < 20">
-              Disponible: {{ getRemainingPercentage() }}%
-            </span>
-          </div>
-          <div class="percentage-input">
-            <input 
-              id="percentage" 
-              [(ngModel)]="selectedEvaluationType.percentage" 
-              type="number" 
-              [min]="0" 
-              [max]="selectedEvaluationType.maxPercentage"
-              placeholder="Ingrese el porcentaje"
-              [class.invalid]="!validatePercentage(selectedEvaluationType.percentage)"
-              required 
-            />
-            <span class="percentage-symbol">%</span>
-          </div>
-          <div class="percentage-validation" *ngIf="!validatePercentage(selectedEvaluationType.percentage)">
-            <i class="fas fa-exclamation-circle"></i>
-            El porcentaje máximo permitido es {{ selectedEvaluationType.maxPercentage }}%
-          </div>
-        </div>
-
         <button 
           class="modal-submit-btn" 
           (click)="saveEvaluationType()"
-          [disabled]="!selectedEvaluationType.name.trim() || 
-                     !validatePercentage(selectedEvaluationType.percentage) ||
-                     selectedEvaluationType.percentage <= 0">
+          [disabled]="!selectedEvaluationType.name.trim()">
           <i class="fas fa-save"></i>
           {{ isEditing ? 'Guardar Cambios' : 'Crear Tipo de Evaluación' }}
         </button>
