@@ -1,12 +1,27 @@
 // src/app/app.config.ts
 import { ApplicationConfig } from '@angular/core';
 import { provideRouter } from '@angular/router';
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { appRoutes } from './app.routes';
-import { provideHttpClient, withFetch } from '@angular/common/http';
+import { AuthInterceptor } from './interceptors/auth.interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    provideRouter(appRoutes), 
-    provideHttpClient(withFetch()) // ✅ Agregar `withFetch()` para habilitar fetch API
+    provideRouter(appRoutes),
+    provideHttpClient(
+      withInterceptors([
+        (req, next) => {
+          const token = localStorage.getItem('token');
+          if (token && !req.url.includes('/auth/login')) {
+            req = req.clone({
+              setHeaders: {
+                Authorization: `Bearer ${token}`
+              }
+            });
+          }
+          return next(req);
+        }
+      ])
+    )
   ]
 };
