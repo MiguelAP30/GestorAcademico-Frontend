@@ -31,6 +31,4 @@ export class StudentService {
   updateStudent(student: any) {
     return this.http.put(`${this.apiUrl}/${student.identification}`, student);
   }
-  
-
 }
