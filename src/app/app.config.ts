@@ -11,13 +11,16 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(
       withInterceptors([
         (req, next) => {
-          const token = localStorage.getItem('token');
-          if (token && !req.url.includes('/auth/login')) {
-            req = req.clone({
-              setHeaders: {
-                Authorization: `Bearer ${token}`
-              }
-            });
+          // Verificar si estamos en el navegador antes de acceder a localStorage
+          if (typeof window !== 'undefined') {
+            const token = localStorage.getItem('token');
+            if (token && !req.url.includes('/auth/login')) {
+              req = req.clone({
+                setHeaders: {
+                  Authorization: `Bearer ${token}`
+                }
+              });
+            }
           }
           return next(req);
         }

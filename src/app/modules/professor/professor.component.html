@@ -47,10 +47,6 @@
     </div>
     <div class="form-container">
       <div class="input-group">
-        <label>Identificación</label>
-        <input type="text" placeholder="Ingrese ID" [(ngModel)]="newProfessor.identification">
-      </div>
-      <div class="input-group">
         <label>Nombre</label>
         <input type="text" placeholder="Ingrese nombre" [(ngModel)]="newProfessor.firstName">
       </div>
@@ -69,7 +65,7 @@
       </div>
       <button class="add-btn modal-submit-btn" 
               (click)="addProfessor()"
-              [disabled]="!newProfessor.identification || !newProfessor.firstName || !newProfessor.lastName || !newProfessor.departmentId">
+              [disabled]="!newProfessor.firstName || !newProfessor.lastName || !newProfessor.departmentId">
         <i class="fas fa-plus"></i> Agregar Profesor
       </button>
     </div>

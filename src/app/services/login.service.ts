@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
 
 interface LoginResponse {
   access_token: string;
@@ -20,18 +19,25 @@ export class LoginService {
   }
 
   saveToken(response: LoginResponse): void {
-    localStorage.setItem('token', response.access_token);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('token', response.access_token);
+    }
   }
 
   getToken(): string | null {
-    return localStorage.getItem('token');
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('token');
+    }
+    return null;
   }
 
   isLoggedIn(): boolean {
-    return !!this.getToken();
+    return this.getToken() !== null;
   }
 
   logout(): void {
-    localStorage.removeItem('token');
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('token');
+    }
   }
 }

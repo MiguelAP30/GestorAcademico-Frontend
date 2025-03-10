@@ -47,45 +47,20 @@
       </div>
       <div class="form-container">
         <div class="input-group">
-          <label>Identificación</label>
-          <input 
-            type="text" 
-            [(ngModel)]="newStudent.identification"
-            placeholder="Ingrese la identificación"
-            required
-          >
-        </div>
-        <div class="input-group">
           <label>Nombre</label>
-          <input 
-            type="text" 
-            [(ngModel)]="newStudent.firstName"
-            placeholder="Ingrese el nombre"
-            required
-          >
+          <input type="text" placeholder="Ingrese nombre" [(ngModel)]="newStudent.firstName">
         </div>
         <div class="input-group">
           <label>Apellido</label>
-          <input 
-            type="text" 
-            [(ngModel)]="newStudent.lastName"
-            placeholder="Ingrese el apellido"
-            required
-          >
+          <input type="text" placeholder="Ingrese apellido" [(ngModel)]="newStudent.lastName">
         </div>
         <div class="input-group">
           <label>Fecha de Nacimiento</label>
-          <input 
-            type="date" 
-            [(ngModel)]="newStudent.birthDate"
-            required
-          >
+          <input type="date" [(ngModel)]="newStudent.birthDate">
         </div>
-        <button 
-          class="modal-submit-btn" 
-          (click)="addStudent()"
-          [disabled]="!newStudent.identification || !newStudent.firstName || !newStudent.lastName || !newStudent.birthDate">
-          <i class="fas fa-save"></i> Crear Estudiante
+        <button class="modal-submit-btn"  (click)="addStudent()"
+                [disabled]="!newStudent.firstName || !newStudent.lastName">
+          <i class="fas fa-plus"></i> Agregar Estudiante
         </button>
       </div>
     </div>

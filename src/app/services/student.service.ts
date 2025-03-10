@@ -15,8 +15,13 @@ export class StudentService {
     return this.http.get<any[]>(this.apiUrl);
   }
 
-  createStudent(professor: any): Observable<any> {
-    return this.http.post<any>(this.apiUrl, professor);
+  createStudent(student: any): Observable<any> {
+    const studentData = {
+      firstName: student.firstName,
+      lastName: student.lastName,
+      birthDate: student.birthDate
+    };
+    return this.http.post(this.apiUrl, studentData);
   }
 
   deleteStudent(id: string): Observable<any> {

@@ -19,7 +19,7 @@ export class ProfessorComponent implements OnInit {
   selectedProfessorForEdit: any = null;
   selectedProfessor: any = null;
   showCreateProfessorModal: boolean = false;
-  newProfessor = { identification: '', firstName: '', lastName: '', departmentId: '' };
+  newProfessor = { firstName: '', lastName: '', departmentId: '' };
 
   constructor(
     private professorService: ProfessorService,
@@ -156,7 +156,7 @@ export class ProfessorComponent implements OnInit {
   }
 
   private validateProfessor(professor: any): boolean {
-    if (!professor.identification.trim() || !professor.firstName.trim() || !professor.lastName.trim()) {
+    if (!professor.firstName?.trim() || !professor.lastName?.trim()) {
       Swal.fire({
         icon: 'error',
         title: 'Error',

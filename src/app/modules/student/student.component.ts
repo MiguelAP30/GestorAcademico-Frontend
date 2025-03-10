@@ -16,7 +16,7 @@ export class StudentComponent implements OnInit {
   selectedStudentForEdit: any = null;
   selectedStudentForCourses: any = null;
   showCreateStudentModal: boolean = false;
-  newStudent = { identification: '', firstName: '', lastName: '', birthDate: '' };
+  newStudent = { firstName: '', lastName: '', birthDate: '' };
   expandedEnrollment: { [key: number]: boolean } = {};
 
   constructor(private studentService: StudentService) {}
@@ -41,8 +41,14 @@ export class StudentComponent implements OnInit {
 
   addStudent(): void {
     if (this.validateStudent(this.newStudent)) {
-      this.studentService.createStudent(this.newStudent).subscribe(
-        () => {
+      const studentData = {
+        firstName: this.newStudent.firstName,
+        lastName: this.newStudent.lastName,
+        birthDate: this.newStudent.birthDate
+      };
+
+      this.studentService.createStudent(studentData).subscribe({
+        next: () => {
           this.loadStudents();
           this.closeCreateStudentModal();
           Swal.fire({
@@ -53,15 +59,15 @@ export class StudentComponent implements OnInit {
             timer: 1500
           });
         },
-        error => {
+        error: (error) => {
           console.error('Error creating student:', error);
           Swal.fire({
             icon: 'error',
             title: 'Error',
-            text: 'No se pudo agregar el estudiante',
+            text: 'No se pudo agregar el estudiante. Por favor, intente nuevamente.',
           });
         }
-      );
+      });
     }
   }
 
@@ -150,11 +156,11 @@ export class StudentComponent implements OnInit {
   }
 
   private validateStudent(student: any): boolean {
-    if (!student.identification?.trim() || !student.firstName?.trim() || !student.lastName?.trim()) {
+    if (!student.firstName?.trim() || !student.lastName?.trim() || !student.birthDate) {
       Swal.fire({
         icon: 'error',
         title: 'Error',
-        text: 'Por favor, complete todos los campos del estudiante',
+        text: 'Por favor, complete todos los campos requeridos',
       });
       return false;
     }
